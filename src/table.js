@@ -7,7 +7,7 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     isSelected = false;
 
-    constructor (table, options) {
+    constructor(table, options) {
         if (isElement(table) && table.tagName === "TABLE") {
             this.table = table; // DOM element table
             this.options = options;
@@ -18,37 +18,42 @@ export default class Table {
         }
     }
 
-    addEvents () {
+    addEvents() {
         on(this.table, "mouseover", (e) => this.onMouseOver(e));
         on(this.table, "mousedown", (e) => this.onMouseDown(e));
         on(this.table, "mouseup", (e) => this.onMouseUp(e));
         on(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e)); // click outside the table
     }
 
+
+    deselectCell(cell) {
+        return cell.classList.remove(this.options.selectClass);
+    }
+
     deselectAll() {
         let length = 0;
         let list = this.table.getElementsByTagName("td");
 
-        for (let item of list) {
-            if (this.isSelectedCell(item)) {
-                this.unselectCell(item);
+        for (let cell of list) {
+            if (this.isSelectedCell(cell)) {
+                this.deselectCell(cell);
                 length++;
             }
         }
         return length;
     }
 
-    destroy () {
+    destroy() {
         this.table.classList.remove(this.options.selectableTableClass);
         deselectAll();
         removeEvents();
     }
 
-    getPositions () {
+    getPositions() {
         return this.positions;
     }
 
-    isRightMouseBtn (e) {
+    isRightMouseBtn(e) {
         let isRightMB;
         e = e || window.event;
 
@@ -85,7 +90,7 @@ export default class Table {
         this.isMouseDown = true;
 
         if (this.isSelectedCell(cell) && this.deselectAll() === 1) {
-            this.unselectCell(cell);
+            this.deselectCell(cell);
         } else {
             this.deselectAll();
             this.selectCell(cell);
@@ -94,34 +99,42 @@ export default class Table {
         this.selectCell(cell);
     }
 
-    onMouseUp (e)
-    {
+    onMouseUp(e) {
         this.isMouseDown = false;
 
     }
 
-    onOutTableClick (e) {
+    onOutTableClick(e) {
         this.isMouseDown = false;
         if (!getParentTag(e.target, "table") && this.options.deselectOutTableClick) {
             this.deselectAll();
         }
     }
 
-    removeEvents () {
+    removeEvents() {
         off(this.table, "mouseover", (e) => this.onMouseOver(e));
         off(this.table, "mousedown", (e) => this.onMouseDown(e));
         off(this.table, "mouseup", (e) => this.onMouseUp(e));
         off(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e));
     }
 
+    selectAll () {
+        let length = 0;
+        let list = this.table.getElementsByTagName("td");
+        for (let cell of list) {
+            if (this.selectCell(cell)) {
+                length++;
+            }
+        }
+        return length;
+    }
+
     selectCell(cell) {
         if (!cell.classList.contains(this.options.ignoreClass) && !cell.parentNode.classList.contains(this.options.ignoreClass)) {
             this.isSelected = true;
-            return cell.classList.add(this.options.selectClass);
+            cell.classList.add(this.options.selectClass);
+            return true;
         }
-    }
-
-    unselectCell(cell) {
-        return cell.classList.remove(this.options.selectClass);
+        return false;
     }
 }

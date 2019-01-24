@@ -22,6 +22,10 @@ export default class TableCellSelector {
         this.obTable = new Table(table, this.options);
     }
 
+    deselect () {
+        return this.obTable.deselectAll();
+    }
+
     destroy () {
         this.obTable.destroy();
     }
@@ -52,6 +56,10 @@ export default class TableCellSelector {
 
     paste (positions, options) {
 
+    }
+
+    selectAll () {
+        return this.obTable.selectAll();
     }
 }
 
