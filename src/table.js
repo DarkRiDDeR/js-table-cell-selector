@@ -1,11 +1,14 @@
 import {getParentTag, isElement, on, off} from "./dom";
+import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Table {
+    countRows = 0;
+    countCols = 0;
     options;
-    positions;
-    table;
+    positions; // [[0, 0], [1, 1]]
+    table; // html table
     isMouseDown = false; // whether the left mouse button is pressed
-    isSelected = false;
+    matrix;
 
     constructor(table, options) {
         if (isElement(table) && table.tagName === "TABLE") {
@@ -13,6 +16,7 @@ export default class Table {
             this.options = options;
             this.table.classList.add(this.options.selectableTableClass);
             this.addEvents();
+            if (this.options.usingSizeMatrix) this.initSizeMatrix();
         } else {
             throw new Error("Мodule must be initialized to Table");
         }
@@ -23,24 +27,6 @@ export default class Table {
         on(this.table, "mousedown", (e) => this.onMouseDown(e));
         on(this.table, "mouseup", (e) => this.onMouseUp(e));
         on(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e)); // click outside the table
-    }
-
-
-    deselectCell(cell) {
-        return cell.classList.remove(this.options.selectClass);
-    }
-
-    deselectAll() {
-        let length = 0;
-        let list = this.table.getElementsByTagName("td");
-
-        for (let cell of list) {
-            if (this.isSelectedCell(cell)) {
-                this.deselectCell(cell);
-                length++;
-            }
-        }
-        return length;
     }
 
     destroy() {
@@ -65,23 +51,64 @@ export default class Table {
         return isRightMB;
     }
 
-    isSelectedCell(cell) {
-        return cell.classList.contains(this.options.selectClass);
-    }
+    initSizeMatrix () {
+        let rows = this.table.getElementsByTagName("tr");
+        this.countRows = rows.length;
+        this.countCols = 0;
 
-    onMouseOver(e) {
-        if (!this.isMouseDown) return false;
+        for (let row of rows) {
+            let length = row.getElementsByTagName("td").length;
+            if (length > this.countCols) {
+                this.countCols = length;
+            }
+        }
 
-        let cell = getParentTag(e.target, "td");
-        if (cell === null) return; // not for cell
+        this.matrix = Array(this.countRows).fill().map(
+            () => Array(this.countCols).fill().map(
+                () => [0, 0]
+            )
+        );
+        let rowCrest = new Array(this.countCols).fill(0);
 
-        this.selectCell(cell);
+        let iy = 0;
+        for (let row of rows) {
+            let ix = 0;
+            let cols = row.getElementsByTagName("td");
 
+            for (let cell of cols) {
+                let colspan = cell.getAttribute("colspan");
+                let rowspan = cell.getAttribute("rowspan");
+
+                while (ix < countCols && rowCrest[ix]) {
+                    rowCrest[ix]--;
+                    this.matrix[iy][ix][0] = this.matrix[iy-1][ix][0] - 1;
+                    this.matrix[iy][ix][1] = this.matrix[iy-1][ix][1];
+                    ix++;
+                }
+
+                if (colspan > 1) {
+                    for (let i = 0; i > -colspan; i--) {
+                        this.matrix[iy][ix][1] = i;
+
+                        if (rowspan > 1) {
+                            rowCrest[ix] = rowspan - 1;
+                        }
+                        ix++;
+                    }
+                } else {
+                    if (rowspan > 1) {
+                        rowCrest[ix] = rowspan - 1;
+                    }
+                    ix++;
+                }
+            }
+            iy++;
+        }
     }
 
     onMouseDown(e) {
         e.preventDefault();
-
+        if (!this.matrix && this.options.usingSizeMatrix) this.initSizeMatrix();
         if (this.isRightMouseBtn(e)) return true;
 
         let cell = getParentTag(e.target, "td");
@@ -99,6 +126,21 @@ export default class Table {
         this.selectCell(cell);
     }
 
+    onMouseOver(e) {
+        if (!this.isMouseDown) return false;
+
+        let cell = getParentTag(e.target, "td");
+        if (cell === null) return; // not for cell
+
+        this.selectCell(cell);
+
+        //magic selection
+        let cells = this.table.getElementsByTagName("td");
+        let firstCell = cells[0];
+        let lastCell = cells[cells.length-1];
+
+    }
+
     onMouseUp(e) {
         this.isMouseDown = false;
 
@@ -109,6 +151,9 @@ export default class Table {
         if (!getParentTag(e.target, "table") && this.options.deselectOutTableClick) {
             this.deselectAll();
         }
+        if (this.options.destroySizeMatrix) {
+            this.matrix = undefined;
+        }
     }
 
     removeEvents() {
@@ -116,25 +161,5 @@ export default class Table {
         off(this.table, "mousedown", (e) => this.onMouseDown(e));
         off(this.table, "mouseup", (e) => this.onMouseUp(e));
         off(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e));
-    }
-
-    selectAll () {
-        let length = 0;
-        let list = this.table.getElementsByTagName("td");
-        for (let cell of list) {
-            if (this.selectCell(cell)) {
-                length++;
-            }
-        }
-        return length;
-    }
-
-    selectCell(cell) {
-        if (!cell.classList.contains(this.options.ignoreClass) && !cell.parentNode.classList.contains(this.options.ignoreClass)) {
-            this.isSelected = true;
-            cell.classList.add(this.options.selectClass);
-            return true;
-        }
-        return false;
     }
 }

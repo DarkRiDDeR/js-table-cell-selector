@@ -7,8 +7,8 @@ export const getParentTag = function (elem, tagName) {
     return null;
 };
 
-export const isElement = function(element) {
-    return element instanceof Element || element instanceof HTMLDocument;
+export const isElement = function(elem) {
+    return elem instanceof Element || elem instanceof HTMLDocument;
 };
 
 export const on = (function() {
