@@ -1,0 +1,111 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>The HTML5 Herald</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table td {
+            border: solid #000 1px;
+            padding: 5px;
+            width: 30px;
+            height: 20px;
+            text-align: center;
+            vertical-align: center;
+        }
+        thead {
+            background-color: #DDF;
+        }
+        tfoot {
+            background-color: #DFD;
+        }
+
+        .tcs-ignore {
+            background-color: #BBB;
+        }
+        .tcs-select {
+            background-color: #A6DCED;
+        }
+    </style>
+<script type="text/javascript" src="/tcs.bundle.min.js"></script></head>
+
+<body>
+<h1>JS Table Cell Selector</h1>
+
+<table id="tcs-table">
+    <thead>
+        <tr class="tcs-ignore">
+            <td>1.1</td>
+            <td>1.2</td>
+            <td>1.3</td>
+            <td>1.4</td>
+            <td>1.5</td>
+            <td>1.6</td>
+        </tr>
+        <tr>
+            <td>2.1</td>
+            <td>2.2</td>
+            <td>2.3</td>
+            <td>2.4</td>
+            <td>2.5</td>
+            <td>2.6</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>3.1</td>
+            <td class="tcs-ignore">3.2</td>
+            <td>3.3</td>
+            <td>3.4</td>
+            <td>3.5</td>
+            <td>3.6</td>
+        </tr>
+        <tr>
+            <td>4.1</td>
+            <td>4.2</td>
+            <td>4.3</td>
+            <td colspan="2" rowspan="2">4.4</td>
+            <td>4.6</td>
+        </tr>
+        <tr>
+            <td>5.1</td>
+            <td class="tcs-ignore" rowspan="2">5.2</td>
+            <td>5.3</td>
+            <td>5.6</td>
+        </tr>
+        <tr>
+            <td>6.1</td>
+            <td>6.3</td>
+            <td>6.4</td>
+            <td>6.5</td>
+            <td>6.6</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>7.1</td>
+            <td>7.2</td>
+            <td>7.3</td>
+            <td>7.4</td>
+            <td>7.5</td>
+            <td class="tcs-ignore">7.6</td>
+        </tr>
+        <tr>
+            <td>8.1</td>
+            <td class="tcs-ignore" colspan="2">8.2</td>
+            <td>8.4</td>
+            <td>8.5</td>
+            <td>8.6</td>
+        </tr>
+    </tfoot>
+</table>
+
+<script>
+    console.log('init');
+    var t = new TableCellSelector(document.getElementById("tcs-table"));
+</script>
+</body>
+</html>
