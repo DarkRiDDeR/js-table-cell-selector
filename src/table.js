@@ -1,12 +1,8 @@
 import {getParentTag, isElement, on, off} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
-import Selector from "./selector";
 
 export default class Table {
-    countRows = 0;
-    countCols = 0;
     isMouseDown = false; // whether the left mouse button is pressed
-    matrix;
     obSelector;
     options;
     positions; // [[0, 0], [1, 1]]
@@ -19,7 +15,6 @@ export default class Table {
             this.options = options;
             addClass(this.table, this.options.selectableTableClass);
             this.addEvents();
-            if (this.options.usingSizeMatrix) this.initSizeMatrix();
         } else {
             throw new Error("Мodule must be initialized to Table");
         }
@@ -53,64 +48,9 @@ export default class Table {
         return isRightMB;
     }
 
-    initSizeMatrix () {
-        let rows = this.table.getElementsByTagName("tr");
-        this.countRows = rows.length;
-        this.countCols = 0;
-
-        for (let row of rows) {
-            let length = row.getElementsByTagName("td").length;
-            if (length > this.countCols) {
-                this.countCols = length;
-            }
-        }
-
-        this.matrix = Array(this.countRows).fill().map(
-            () => Array(this.countCols).fill().map(
-                () => [0, 0]
-            )
-        );
-        let rowCrest = new Array(this.countCols).fill(0);
-
-        let iy = 0;
-        for (let row of rows) {
-            let ix = 0;
-            let cols = row.getElementsByTagName("td");
-
-            for (let cell of cols) {
-                let colspan = cell.getAttribute("colspan");
-                let rowspan = cell.getAttribute("rowspan");
-
-                while (ix < this.countCols && rowCrest[ix]) {
-                    rowCrest[ix]--;
-                    this.matrix[iy][ix][0] = this.matrix[iy-1][ix][0] - 1;
-                    this.matrix[iy][ix][1] = this.matrix[iy-1][ix][1];
-                    ix++;
-                }
-
-                if (colspan > 1) {
-                    for (let i = 0; i > -colspan; i--) {
-                        this.matrix[iy][ix][1] = i;
-
-                        if (rowspan > 1) {
-                            rowCrest[ix] = rowspan - 1;
-                        }
-                        ix++;
-                    }
-                } else {
-                    if (rowspan > 1) {
-                        rowCrest[ix] = rowspan - 1;
-                    }
-                    ix++;
-                }
-            }
-            iy++;
-        }
-    }
-
     onMouseDown(e) {
         e.preventDefault();
-        if (!this.matrix && this.options.usingSizeMatrix) this.initSizeMatrix();
+        if (!this.matrix && this.options.usingSizeMatrix) this.obSelector.initSizeMatrix();
         if (this.isRightMouseBtn(e)) return true;
 
         let cell = getParentTag(e.target, "td");
@@ -129,12 +69,8 @@ export default class Table {
         if (cell === null) return; // not for cell
 
         this.obSelector.selectCell(cell);
-
         //magic selection
-        let cells = this.table.getElementsByTagName("td");
-        let firstCell = cells[0];
-        let lastCell = cells[cells.length-1];
-
+        this.obSelector.toRectangle();
     }
 
     onMouseUp(e) {
@@ -148,7 +84,7 @@ export default class Table {
             this.obSelector.deselectAll();
         }
         if (this.options.destroySizeMatrix) {
-            this.matrix = undefined;
+            this.obSelector.destroySizeMatrix();
         }
     }
 
