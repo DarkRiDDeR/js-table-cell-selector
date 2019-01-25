@@ -70,7 +70,7 @@ export default class Table {
 
         this.obSelector.selectCell(cell);
         //magic selection
-        this.obSelector.toRectangle();
+        this.obSelector.toSelectedRectangle();
     }
 
     onMouseUp(e) {

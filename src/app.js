@@ -11,13 +11,13 @@ const _GET_DATA_JSON = "json";
 export default class TableCellSelector {
     options = {
         deselectOutTableClick: true,
-        destroySizeMatrix: false, // when out table click. Clear memory for big table
+        destroySizeMatrix: false, // when out table click. Clear memory for big table or changing tables
         ignoreClass: 'tcs-ignore',
-        mergePasting: false,
-        mergePastingGlue: '',
+        mergePasting: true,
+        mergePastingGlue: ' ',
         selectableTableClass : 'tcs',// class added to table
         selectClass: 'tcs-select',
-        usingSizeMatrix: true, // for tables with merged cells, enabling is mandatory. Shutdown optimizes performance.
+        usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
     };
     obTable;
     obSelector;
@@ -36,6 +36,13 @@ export default class TableCellSelector {
     destroy () {
         this.deselect();
         this.obTable.destroy();
+    }
+
+    /**
+     * destroy size matrix for big table or changing tables
+     */
+    destroySizeMatrix () {
+        this.obSelector.destroySizeMatrix();
     }
 
     static get GET_DATA_TEXT () {
@@ -72,7 +79,7 @@ export default class TableCellSelector {
      * @param c2 - end position [1, 1]
      */
     select (c1, c2) {
-        this.select(c1, c2);
+        this.obSelector.select(c1, c2);
     }
 
     selectAll () {
