@@ -1,21 +1,23 @@
 import {getParentTag, isElement, on, off} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
-import Selector from "selector";
+import Selector from "./selector";
 
 export default class Table {
     countRows = 0;
     countCols = 0;
+    isMouseDown = false; // whether the left mouse button is pressed
+    matrix;
+    obSelector;
     options;
     positions; // [[0, 0], [1, 1]]
     table; // html table
-    isMouseDown = false; // whether the left mouse button is pressed
-    matrix;
 
-    constructor(table, options) {
+    constructor(table, obSelector, options) {
         if (isElement(table) && table.tagName === "TABLE") {
             this.table = table; // DOM element table
+            this.obSelector = obSelector;
             this.options = options;
-            this.table.classList.add(this.options.selectableTableClass);
+            addClass(this.table, this.options.selectableTableClass);
             this.addEvents();
             if (this.options.usingSizeMatrix) this.initSizeMatrix();
         } else {
@@ -31,8 +33,7 @@ export default class Table {
     }
 
     destroy() {
-        this.table.classList.remove(this.options.selectableTableClass);
-        deselectAll();
+        removeClass(this.table, this.options.selectableTableClass);
         removeEvents();
     }
 
@@ -80,7 +81,7 @@ export default class Table {
                 let colspan = cell.getAttribute("colspan");
                 let rowspan = cell.getAttribute("rowspan");
 
-                while (ix < countCols && rowCrest[ix]) {
+                while (ix < this.countCols && rowCrest[ix]) {
                     rowCrest[ix]--;
                     this.matrix[iy][ix][0] = this.matrix[iy-1][ix][0] - 1;
                     this.matrix[iy][ix][1] = this.matrix[iy-1][ix][1];
@@ -117,14 +118,8 @@ export default class Table {
 
         this.isMouseDown = true;
 
-        if (this.isSelectedCell(cell) && this.deselectAll() === 1) {
-            this.deselectCell(cell);
-        } else {
-            this.deselectAll();
-            this.selectCell(cell);
-        }
-
-        this.selectCell(cell);
+        this.obSelector.deselectAll();
+        this.obSelector.selectCell(cell);
     }
 
     onMouseOver(e) {
@@ -133,7 +128,7 @@ export default class Table {
         let cell = getParentTag(e.target, "td");
         if (cell === null) return; // not for cell
 
-        this.selectCell(cell);
+        this.obSelector.selectCell(cell);
 
         //magic selection
         let cells = this.table.getElementsByTagName("td");
@@ -150,7 +145,7 @@ export default class Table {
     onOutTableClick(e) {
         this.isMouseDown = false;
         if (!getParentTag(e.target, "table") && this.options.deselectOutTableClick) {
-            this.deselectAll();
+            this.obSelector.deselectAll();
         }
         if (this.options.destroySizeMatrix) {
             this.matrix = undefined;

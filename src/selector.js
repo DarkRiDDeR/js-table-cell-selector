@@ -10,8 +10,8 @@ export default class Selector {
         this.options = options;
     }
 
-    static deselectCell(cell) {
-        return cell.classList.remove(this.options.selectClass);
+    deselectCell(cell) {
+        removeClass(cell, this.options.selectClass);
     }
 
     deselectAll() {
@@ -27,8 +27,8 @@ export default class Selector {
         return length;
     }
 
-    static isSelectedCell(cell) {
-        return cell.classList.contains(this.options.selectClass);
+    isSelectedCell(cell) {
+        return hasClass(cell, this.options.selectClass);
     }
 
     /**
@@ -80,10 +80,15 @@ export default class Selector {
         return length;
     }
 
-    static selectCell(cell) {
-        if (!cell.classList.contains(this.options.ignoreClass) && !cell.parentNode.classList.contains(this.options.ignoreClass)) {
+    selectCell(cell) {
+        const ignoreClass = this.options.ignoreClass;
+        if (
+            !hasClass(cell, ignoreClass) // td
+            && !hasClass(cell.parentNode, ignoreClass) // tr
+            && !hasClass(cell.parentNode.parentNode, ignoreClass) // example thead or tfoot
+        ) {
             this.isSelected = true;
-            cell.classList.add(this.options.selectClass);
+            addClass(cell, this.options.selectClass);
             return true;
         }
         return false;

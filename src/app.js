@@ -1,5 +1,6 @@
 "use strict";
 
+import Selector from "./selector";
 import Table from "./table";
 
 
@@ -10,23 +11,30 @@ const _GET_DATA_JSON = "json";
 export default class TableCellSelector {
     options = {
         deselectOutTableClick: true,
+        destroySizeMatrix: false, // when out table click. Clear memory for big table
         ignoreClass: 'tcs-ignore',
+        mergePasting: false,
+        mergePastingGlue: '',
         selectableTableClass : 'tcs',// class added to table
         selectClass: 'tcs-select',
+        usingSizeMatrix: true, // for tables with merged cells, enabling is mandatory. Shutdown optimizes performance.
     };
     obTable;
+    obSelector;
 
 
     constructor (table, options) {
         Object.assign(this.options, options);
-        this.obTable = new Table(table, this.options);
+        this.obSelector = new Selector(table, this.options);
+        this.obTable = new Table(table, this.obSelector, this.options);
     }
 
     deselect () {
-        return this.obTable.deselectAll();
+        return this.obSelector.deselectAll();
     }
 
     destroy () {
+        this.deselect();
         this.obTable.destroy();
     }
 
@@ -58,9 +66,20 @@ export default class TableCellSelector {
 
     }
 
+    /**
+     * select cells. Fn: select (c1 [, c2])
+     * @param c1 - starting position [0, 0]
+     * @param c2 - end position [1, 1]
+     */
+    select (c1, c2) {
+        this.select(c1, c2);
+    }
+
     selectAll () {
-        return this.obTable.selectAll();
+        return this.obSelector.selectAll();
     }
 }
 
-window.TableCellSelector = TableCellSelector;
+if (window) {
+    window.TableCellSelector = TableCellSelector;
+}
