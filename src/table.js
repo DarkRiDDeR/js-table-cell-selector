@@ -1,5 +1,6 @@
 import {getParentTag, isElement, on, off} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
+import Selector from "selector";
 
 export default class Table {
     countRows = 0;

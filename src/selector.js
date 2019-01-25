@@ -1,3 +1,5 @@
+import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
+
 export default class Selector {
     isSelected = false;
     options;
