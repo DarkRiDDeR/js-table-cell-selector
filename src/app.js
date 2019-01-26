@@ -16,6 +16,7 @@ export default class TableCellSelector {
         mergePasting: true,
         mergePastingGlue: ' ',
         selectableTableClass : 'tcs',// class added to table
+        selectIgnoreClass: true,
         selectClass: 'tcs-select',
         usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
     };
@@ -24,7 +25,7 @@ export default class TableCellSelector {
 
 
     constructor (table, options) {
-        Object.assign(this.options, options);
+        if (typeof options === "object") Object.assign(this.options, options);
         this.obSelector = new Selector(table, this.options);
         this.obTable = new Table(table, this.obSelector, this.options);
     }
@@ -77,9 +78,10 @@ export default class TableCellSelector {
      * select cells. Fn: select (c1 [, c2])
      * @param c1 - starting position [0, 0]
      * @param c2 - end position [1, 1]
+     * @returns {boolean}
      */
     select (c1, c2) {
-        this.obSelector.select(c1, c2);
+        return this.obSelector.select(c1, c2);
     }
 
     selectAll () {

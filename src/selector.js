@@ -298,7 +298,8 @@ export default class Selector {
     selectCell(cell) {
         const ignoreClass = this.options.ignoreClass;
         if (
-            !hasClass(cell, ignoreClass) // td
+            this.options.selectIgnoreClass
+            || !hasClass(cell, ignoreClass) // td
             && !hasClass(cell.parentNode, ignoreClass) // tr
             && !hasClass(cell.parentNode.parentNode, ignoreClass) // example thead or tfoot
         ) {
