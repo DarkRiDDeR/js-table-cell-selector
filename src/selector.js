@@ -225,9 +225,6 @@ export default class Selector {
                     if (isEmpty(this.matrix)) this.initSizeMatrix();
                     [c1, c2] = this.getRectangleCoords(c1, c2);
 
-                    console.log(c1);
-                    console.log(c2);
-
                     let rows = this.table.getElementsByTagName("tr");
                     for (let iy = c1[0]; iy <= c2[0]; iy++) {
                         let cols = rows[iy].getElementsByTagName("td");
@@ -291,10 +288,27 @@ export default class Selector {
         let c2 = Array(2);
 
         if (this.options.usingSizeMatrix) {
-            //[c1, c2] = this.getRectangleCoords(c1, c2);
+            // get extreme points
+            let rows = this.table.getElementsByTagName("tr");
+            for (let iy = 0; iy < this.countRows; iy++) {
+                let cols = rows[iy].getElementsByTagName("td");
+                let itd = 0;
+                for (let ix = 0; ix < this.countCols; ix++) {
+                    if (this.isSelectedCell(cols[itd])) {
+                        isSelected = true;
 
+                        if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
+                        if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
+
+                        if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
+                        if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
+                    }
+                    if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+                        itd++;
+                    }
+                }
+            }
         } else {
-
             let rows = this.table.getElementsByTagName("tr");
             for (let iy = 0; iy < rows.length; iy++) {
                 let cols = rows[iy].getElementsByTagName("td");
