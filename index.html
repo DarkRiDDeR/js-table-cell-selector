@@ -171,7 +171,6 @@
         document.getElementsByName("deselectOutTableClick")[0].onclick = function (e) {
             tcs.destroy();
             options["deselectOutTableClick"] = this.checked;
-            console.log(options);
             tcs = new TableCellSelector(table, options);
         };
         document.getElementsByName("selectIgnoreClass")[0].onclick = function (e) {

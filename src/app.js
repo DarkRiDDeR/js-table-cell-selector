@@ -81,6 +81,7 @@ export default class TableCellSelector {
      * @returns {boolean}
      */
     select (c1, c2) {
+        this.obSelector.deselectAll();
         return this.obSelector.select(c1, c2);
     }
 

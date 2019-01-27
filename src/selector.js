@@ -321,16 +321,16 @@ export default class Selector {
                 let cols = rows[iy].getElementsByTagName("td");
                 let itd = 0;
                 for (let ix = 0; ix < this.countCols; ix++) {
-                    if (this.isSelectedCell(cols[itd])) {
-                        isSelected = true;
-
-                        if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
-                        if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
-
-                        if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
-                        if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
-                    }
                     if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+                        if (this.isSelectedCell(cols[itd])) {
+                            isSelected = true;
+
+                            if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
+                            if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
+
+                            if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
+                            if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
+                        }
                         itd++;
                     }
                 }
@@ -353,7 +353,6 @@ export default class Selector {
                 }
             }
         }
-
         if (isSelected) this.select(c1, c2);
     }
 }
