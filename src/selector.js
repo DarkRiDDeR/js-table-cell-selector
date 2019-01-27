@@ -83,6 +83,61 @@ export default class Selector {
         }
     }
 
+    /**
+     * get coords of selected cells
+     * @returns array [[0, 0], [1, 1]] or false
+     */
+    getSelectedRectangleCoords () {
+        let isSelected = false;
+        let c1 = Array(2);
+        let c2 = Array(2);
+
+        if (this.options.usingSizeMatrix) {
+            // get extreme points
+            let rows = this.table.getElementsByTagName("tr");
+            for (let iy = 0; iy < this.countRows; iy++) {
+                let cols = rows[iy].getElementsByTagName("td");
+                let itd = 0;
+                for (let ix = 0; ix < this.countCols; ix++) {
+                    if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+                        if (this.isSelectedCell(cols[itd])) {
+                            isSelected = true;
+
+                            if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
+                            if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
+
+                            if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
+                            if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
+                        }
+                        itd++;
+                    }
+                }
+            }
+        } else {
+            let rows = this.table.getElementsByTagName("tr");
+            for (let iy = 0; iy < rows.length; iy++) {
+                let cols = rows[iy].getElementsByTagName("td");
+                for (let ix = 0; ix < cols.length; ix++) {
+                    if(this.isSelectedCell(cols[ix]))
+                    {
+                        isSelected = true;
+
+                        if (c1[0] === undefined || iy < c1[0]) c1[0] = iy;
+                        if (c2[0] === undefined || iy > c2[0]) c2[0] = iy;
+
+                        if (c1[1] === undefined || ix < c1[1]) c1[1] = ix;
+                        if (c2[1] === undefined || ix > c2[1]) c2[1] = ix;
+                    }
+                }
+            }
+        }
+        return isSelected ? [c1, c2] : false;
+    }
+
+    getSizeMatrix () {
+        return this.matrix;
+    }
+
     getRectangleCoords (c1, c2) {
         // magic ))
         let loop = true;
@@ -135,6 +190,10 @@ export default class Selector {
             }
         }
         return [c1, c2];
+    }
+
+    getTable () {
+        return this.table;
     }
 
     initSizeMatrix () {
@@ -307,52 +366,5 @@ export default class Selector {
             return true;
         }
         return false;
-    }
-
-    toSelectedRectangle () {
-        let isSelected = false;
-        let c1 = Array(2);
-        let c2 = Array(2);
-
-        if (this.options.usingSizeMatrix) {
-            // get extreme points
-            let rows = this.table.getElementsByTagName("tr");
-            for (let iy = 0; iy < this.countRows; iy++) {
-                let cols = rows[iy].getElementsByTagName("td");
-                let itd = 0;
-                for (let ix = 0; ix < this.countCols; ix++) {
-                    if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                        if (this.isSelectedCell(cols[itd])) {
-                            isSelected = true;
-
-                            if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
-                            if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
-
-                            if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
-                            if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
-                        }
-                        itd++;
-                    }
-                }
-            }
-        } else {
-            let rows = this.table.getElementsByTagName("tr");
-            for (let iy = 0; iy < rows.length; iy++) {
-                let cols = rows[iy].getElementsByTagName("td");
-                for (let ix = 0; ix < cols.length; ix++) {
-                    if(this.isSelectedCell(cols[ix]))
-                    {
-                        isSelected = true;
-
-                        if (c1[0] === undefined || iy < c1[0]) c1[0] = iy;
-                        if (c2[0] === undefined || iy > c2[0]) c2[0] = iy;
-
-                        if (c1[1] === undefined || ix < c1[1]) c1[1] = ix;
-                        if (c2[1] === undefined || ix > c2[1]) c2[1] = ix;
-                    }
-                }
-            }
-        }
-        if (isSelected) this.select(c1, c2);
     }
 }

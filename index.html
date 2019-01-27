@@ -138,13 +138,24 @@
         <input type="checkbox" name="selectIgnoreClass" value="1" checked> selectIgnoreClass
         <br><br>
 
-        Y: <input type="number" name="coord1-y" value="5"> X: <input type="number" name="coord1-x" value="3"><br><br>
-        Y: <input type="number" name="coord2-y" value="6"> X: <input type="number" name="coord2-x" value="4"><br><br>
+        Y1: <input type="number" name="coord1-y" value="5"> X1: <input type="number" name="coord1-x" value="3"><br><br>
+        Y2: <input type="number" name="coord2-y" value="6"> X2: <input type="number" name="coord2-x" value="4"><br><br>
 
-        <button id="select">Select</button> <button id="select-all">Select all</button> <button id="deselect">Deselect</button><br><br>
-        <button id="copy">Copy</button> <button id="cut">Cut</button> <button id="paste">Paste</button><br><br>
-        <button id="destroy">Destroy</button> <button id="init">Init</button>
-    </form>
+        <button id="select">Select</button>
+        <button id="select-all">Select all</button>
+        <button id="deselect">Deselect</button>
+        <button id="coords">Get coordinates</button>
+        <br><br>
+
+        <button id="copy">Copy</button>
+        <button id="cut">Cut</button>
+        <button id="paste">Paste</button>
+        <br><br>
+
+        <button id="destroy">Destroy</button>
+        <button id="init">Init</button>
+    </form><br>
+    <b>Open the browser console!!!</b>
 </div>
 
 <script>
@@ -195,6 +206,11 @@
             e.preventDefault();
             var res = tcs.deselect();
             console.log("deselect = " + res);
+        };
+        document.getElementById("coords").onclick = function (e) {
+            e.preventDefault();
+            var res = tcs.getCoords();
+            console.log("coords = " + (res ? "[["+res[0]+"],["+res[1]+"]]" : res));
         };
 
         document.getElementById("init").onclick = function (e) {

@@ -37,6 +37,9 @@ export default class TableCellSelector {
     destroy () {
         this.deselect();
         this.obTable.destroy();
+        delete this.obTable;
+        delete this.obSelector;
+        delete this;
     }
 
     /**
@@ -62,8 +65,12 @@ export default class TableCellSelector {
 
     }
 
-    getPositions () {
-        return this.obTable.getPositions();
+    /**
+     *
+     * @returns {*}
+     */
+    getCoords () {
+        return this.obSelector.getSelectedRectangleCoords();
     }
 
     getJson (type) {

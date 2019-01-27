@@ -5,7 +5,6 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obSelector;
     options;
-    positions; // [[0, 0], [1, 1]]
     table; // html table
     _onMouseOver = (e) => this.onMouseOver(e);
     _onMouseDown = (e) => this.onMouseDown(e);
@@ -35,10 +34,6 @@ export default class Table {
     destroy() {
         removeClass(this.table, this.options.selectableTableClass);
         this.removeEvents();
-    }
-
-    getPositions() {
-        return this.positions;
     }
 
     isRightMouseBtn(e) {
@@ -75,7 +70,8 @@ export default class Table {
 
         this.obSelector.selectCell(cell);
         //magic selection
-        this.obSelector.toSelectedRectangle();
+        let coords = this.obSelector.getSelectedRectangleCoords();
+        if (coords !== false) this.obSelector.select(coords[0], coords[1]);
     }
 
     onMouseUp(e) {
