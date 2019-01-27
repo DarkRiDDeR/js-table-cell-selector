@@ -1,3 +1,4 @@
+import {_gOptions} from "./app";
 import {getParentTag, isElement, on, off} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
@@ -12,12 +13,11 @@ export default class Table {
     _onOutTableClick = (e) => this.onOutTableClick(e);
 
 
-    constructor(table, obSelector, options) {
+    constructor(table, obSelector) {
         if (isElement(table) && table.tagName === "TABLE") {
             this.table = table; // DOM element table
             this.obSelector = obSelector;
-            this.options = options;
-            addClass(this.table, this.options.selectableTableClass);
+            addClass(this.table, _gOptions.selectableTableClass);
             this.addEvents();
         } else {
             throw new Error("Мodule must be initialized to Table");
@@ -32,7 +32,7 @@ export default class Table {
     }
 
     destroy() {
-        removeClass(this.table, this.options.selectableTableClass);
+        removeClass(this.table, _gOptions.selectableTableClass);
         this.removeEvents();
     }
 
@@ -50,7 +50,7 @@ export default class Table {
 
     onMouseDown(e) {
         e.preventDefault();
-        if (!this.matrix && this.options.usingSizeMatrix) this.obSelector.initSizeMatrix();
+        if (!this.matrix && _gOptions.usingSizeMatrix) this.obSelector.initSizeMatrix();
         if (this.isRightMouseBtn(e)) return true;
 
         let cell = getParentTag(e.target, "td");
@@ -81,10 +81,10 @@ export default class Table {
 
     onOutTableClick(e) {
         this.isMouseDown = false;
-        if (this.options.deselectOutTableClick && !getParentTag(e.target, "table")) {
+        if (_gOptions.deselectOutTableClick && !getParentTag(e.target, "table")) {
             this.obSelector.deselectAll();
         }
-        if (this.options.destroySizeMatrix) {
+        if (_gOptions.destroySizeMatrix) {
             this.obSelector.destroySizeMatrix();
         }
     }

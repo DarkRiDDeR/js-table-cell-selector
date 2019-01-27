@@ -1,3 +1,4 @@
+import {_gOptions} from "./app";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Selector {
@@ -7,14 +8,13 @@ export default class Selector {
     options;
     table;
 
-    constructor (table, options) {
+    constructor (table) {
         this.table = table;
-        this.options = options;
-        if (this.options.usingSizeMatrix) this.initSizeMatrix();
+        if (_gOptions.usingSizeMatrix) this.initSizeMatrix();
     }
 
     deselectCell(cell) {
-        removeClass(cell, this.options.selectClass);
+        removeClass(cell, _gOptions.selectClass);
     }
 
     deselectAll() {
@@ -47,7 +47,7 @@ export default class Selector {
             c[1] = parseInt(c[1]) || 0;
 
             if (c[0] >= 0 && c[1] >= 0) {
-                if (this.options.usingSizeMatrix) {
+                if (_gOptions.usingSizeMatrix) {
                     if (isEmpty(this.matrix)) this.initSizeMatrix();
 
                     if (c[0] < this.countRows && c[1] < this.countCols) {
@@ -92,7 +92,7 @@ export default class Selector {
         let c1 = Array(2);
         let c2 = Array(2);
 
-        if (this.options.usingSizeMatrix) {
+        if (_gOptions.usingSizeMatrix) {
             // get extreme points
             let rows = this.table.getElementsByTagName("tr");
             for (let iy = 0; iy < this.countRows; iy++) {
@@ -254,7 +254,7 @@ export default class Selector {
     }
 
     isSelectedCell(cell) {
-        return hasClass(cell, this.options.selectClass);
+        return hasClass(cell, _gOptions.selectClass);
     }
 
     normalizeCoords (c1, c2) {
@@ -297,7 +297,7 @@ export default class Selector {
                 let isSelected = false;
                 [c1, c2] = this.normalizeCoords(c1, c2);
 
-                if (this.options.usingSizeMatrix) {
+                if (_gOptions.usingSizeMatrix) {
                     if (isEmpty(this.matrix)) this.initSizeMatrix();
                     if (c1[0] >= this.countRows || c1[1] >= this.countCols || c2[0] < 0 || c2[1] < 0) return false;
                     if (c1[0] < 0) c1[0] = 0;
@@ -355,14 +355,14 @@ export default class Selector {
     }
 
     selectCell(cell) {
-        const ignoreClass = this.options.ignoreClass;
+        const ignoreClass = _gOptions.ignoreClass;
         if (
-            this.options.selectIgnoreClass
+            _gOptions.selectIgnoreClass
             || !hasClass(cell, ignoreClass) // td
             && !hasClass(cell.parentNode, ignoreClass) // tr
             && !hasClass(cell.parentNode.parentNode, ignoreClass) // example thead or tfoot
         ) {
-            addClass(cell, this.options.selectClass);
+            addClass(cell, _gOptions.selectClass);
             return true;
         }
         return false;

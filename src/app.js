@@ -8,26 +8,28 @@ const _GET_DATA_TEXT = "text"; // default
 const _GET_DATA_HTML = "html";
 const _GET_DATA_JSON = "json";
 
+export let _gOptions = {
+    deselectOutTableClick: true,
+    destroySizeMatrix: false, // when out table click. Clear memory for big table or changing tables
+    ignoreClass: 'tcs-ignore',
+    //TODO: mergePasting: true,
+    mergePastingGlue: ' ',
+    selectableTableClass : 'tcs',// class added to table
+    selectIgnoreClass: true,
+    selectClass: 'tcs-select',
+    usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
+};
+
 export default class TableCellSelector {
-    options = {
-        deselectOutTableClick: true,
-        destroySizeMatrix: false, // when out table click. Clear memory for big table or changing tables
-        ignoreClass: 'tcs-ignore',
-        //TODO: mergePasting: true,
-        mergePastingGlue: ' ',
-        selectableTableClass : 'tcs',// class added to table
-        selectIgnoreClass: true,
-        selectClass: 'tcs-select',
-        usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
-    };
+
     obTable;
     obSelector;
 
 
     constructor (table, options) {
-        if (typeof options === "object") Object.assign(this.options, options);
-        this.obSelector = new Selector(table, this.options);
-        this.obTable = new Table(table, this.obSelector, this.options);
+        if (typeof options === "object") Object.assign(_gOptions, options);
+        this.obSelector = new Selector(table, _gOptions);
+        this.obTable = new Table(table, this.obSelector, _gOptions);
     }
 
     deselect () {
