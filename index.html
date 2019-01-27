@@ -29,7 +29,8 @@
         .tcs-ignore {
             background-color: #BBB;
         }
-        .tcs-select.tcs-ignore {
+        .tcs-select.tcs-ignore,
+        .tcs-ignore .tcs-select {
             background-color: #7AAAB9;
         }
 
@@ -133,18 +134,25 @@
 <br>
 <div class="interface">
     <form>
+        <input type="checkbox" name="deselectOutTableClick" value="1"> deselectOutTableClick<br>
+        <input type="checkbox" name="selectIgnoreClass" value="1" checked> selectIgnoreClass
+        <br><br>
+
         Y: <input type="number" name="coord1-y" value="5"> X: <input type="number" name="coord1-x" value="3"><br><br>
         Y: <input type="number" name="coord2-y" value="6"> X: <input type="number" name="coord2-x" value="4"><br><br>
 
         <button id="select">Select</button> <button id="select-all">Select all</button> <button id="deselect">Deselect</button><br><br>
-        <button id="copy">Copy</button> <button id="cut">Cut</button> <button id="paste">Paste</button>
+        <button id="copy">Copy</button> <button id="cut">Cut</button> <button id="paste">Paste</button><br><br>
+        <button id="destroy">Destroy</button> <button id="init">Init</button>
     </form>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function(e) {
         console.log('example');
-        var tcs = new TableCellSelector(document.getElementById("tcs-table"), {deselectOutTableClick: false});
+        var options = {deselectOutTableClick: false};
+        var table = document.getElementById("tcs-table");
+        var tcs = new TableCellSelector(document.getElementById("tcs-table"), options);
 
         function getCoord() {
             return [
@@ -159,23 +167,46 @@
             ]
         }
 
+        // options
+        document.getElementsByName("deselectOutTableClick")[0].onclick = function (e) {
+            tcs.destroy();
+            options["deselectOutTableClick"] = this.checked;
+            console.log(options);
+            tcs = new TableCellSelector(table, options);
+        };
+        document.getElementsByName("selectIgnoreClass")[0].onclick = function (e) {
+            options["selectIgnoreClass"] = this.checked;
+            tcs.destroy();
+            tcs = new TableCellSelector(table, options);
+        };
+
+        // btns
         document.getElementById("select").onclick = function (e) {
             e.preventDefault();
             var coords = getCoord();
             var res = tcs.select(coords[0], coords[1]);
             console.log("select = " + res);
         };
-
         document.getElementById("select-all").onclick = function (e) {
             e.preventDefault();
             var res = tcs.selectAll();
             console.log("selectAll = " + res);
         };
-
         document.getElementById("deselect").onclick = function (e) {
             e.preventDefault();
             var res = tcs.deselect();
             console.log("deselect = " + res);
+        };
+
+        document.getElementById("init").onclick = function (e) {
+            e.preventDefault();
+            tcs = new TableCellSelector(table, options);
+            console.log("init");
+        };
+        document.getElementById("destroy").onclick = function (e) {
+            e.preventDefault();
+            tcs.destroy();
+            console.log("destroy");
         };
 
     });

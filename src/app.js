@@ -13,7 +13,7 @@ export default class TableCellSelector {
         deselectOutTableClick: true,
         destroySizeMatrix: false, // when out table click. Clear memory for big table or changing tables
         ignoreClass: 'tcs-ignore',
-        mergePasting: true,
+        //TODO: mergePasting: true,
         mergePastingGlue: ' ',
         selectableTableClass : 'tcs',// class added to table
         selectIgnoreClass: true,

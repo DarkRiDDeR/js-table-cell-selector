@@ -7,6 +7,11 @@ export default class Table {
     options;
     positions; // [[0, 0], [1, 1]]
     table; // html table
+    _onMouseOver = (e) => this.onMouseOver(e);
+    _onMouseDown = (e) => this.onMouseDown(e);
+    _onMouseUp = (e) => this.onMouseUp(e);
+    _onOutTableClick = (e) => this.onOutTableClick(e);
+
 
     constructor(table, obSelector, options) {
         if (isElement(table) && table.tagName === "TABLE") {
@@ -21,15 +26,15 @@ export default class Table {
     }
 
     addEvents() {
-        on(this.table, "mouseover", (e) => this.onMouseOver(e));
-        on(this.table, "mousedown", (e) => this.onMouseDown(e));
-        on(this.table, "mouseup", (e) => this.onMouseUp(e));
-        on(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e)); // click outside the table
+        on(this.table, "mouseover", this._onMouseOver);
+        on(this.table, "mousedown", this._onMouseDown);
+        on(this.table, "mouseup", this._onMouseUp);
+        on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
 
     destroy() {
         removeClass(this.table, this.options.selectableTableClass);
-        removeEvents();
+        this.removeEvents();
     }
 
     getPositions() {
@@ -80,7 +85,7 @@ export default class Table {
 
     onOutTableClick(e) {
         this.isMouseDown = false;
-        if (!getParentTag(e.target, "table") && this.options.deselectOutTableClick) {
+        if (this.options.deselectOutTableClick && !getParentTag(e.target, "table")) {
             this.obSelector.deselectAll();
         }
         if (this.options.destroySizeMatrix) {
@@ -89,9 +94,9 @@ export default class Table {
     }
 
     removeEvents() {
-        off(this.table, "mouseover", (e) => this.onMouseOver(e));
-        off(this.table, "mousedown", (e) => this.onMouseDown(e));
-        off(this.table, "mouseup", (e) => this.onMouseUp(e));
-        off(this.table.ownerDocument, "click", (e) => this.onOutTableClick(e));
+        off(this.table, "mouseover", this._onMouseOver);
+        off(this.table, "mousedown", this._onMouseDown);
+        off(this.table, "mouseup", this._onMouseUp);
+        off(this.table.ownerDocument, "click", this._onOutTableClick);
     }
 }
