@@ -23,14 +23,25 @@
             background-color: #DFD;
         }
 
-        .tcs-ignore {
-            background-color: #BBB;
-        }
         .tcs-select {
             background-color: #A6DCED;
         }
+        .tcs-ignore {
+            background-color: #BBB;
+        }
+        .tcs-select.tcs-ignore,
+        .tcs-ignore .tcs-select {
+            background-color: #7AAAB9;
+        }
+
+        .interface {
+            font-size: 1.2em;
+        }
+        .interface input[type=number] {
+            width: 3em;
+        }
     </style>
-<script type="text/javascript" src="/tcs.bundle.min.js"></script></head>
+<script type="text/javascript" src="tcs.bundle.min.js"></script></head>
 
 <body>
 <h1>JS Table Cell Selector</h1>
@@ -38,6 +49,16 @@
 <table id="tcs-table">
     <thead>
         <tr class="tcs-ignore">
+            <td>0.0</td>
+            <td>0.1</td>
+            <td>0.2</td>
+            <td>0.3</td>
+            <td>0.4</td>
+            <td>0.5</td>
+            <td>0.6</td>
+        </tr>
+        <tr class="">
+            <td>1.0</td>
             <td>1.1</td>
             <td>1.2</td>
             <td>1.3</td>
@@ -46,6 +67,7 @@
             <td>1.6</td>
         </tr>
         <tr>
+            <td>2.0</td>
             <td>2.1</td>
             <td>2.2</td>
             <td>2.3</td>
@@ -56,6 +78,7 @@
     </thead>
     <tbody>
         <tr>
+            <td>3.0</td>
             <td>3.1</td>
             <td class="tcs-ignore">3.2</td>
             <td>3.3</td>
@@ -64,6 +87,7 @@
             <td>3.6</td>
         </tr>
         <tr>
+            <td>4.0</td>
             <td>4.1</td>
             <td>4.2</td>
             <td>4.3</td>
@@ -71,12 +95,14 @@
             <td>4.6</td>
         </tr>
         <tr>
+            <td>5.0</td>
             <td>5.1</td>
             <td class="tcs-ignore" rowspan="2">5.2</td>
             <td>5.3</td>
             <td>5.6</td>
         </tr>
         <tr>
+            <td>6.0</td>
             <td>6.1</td>
             <td>6.3</td>
             <td>6.4</td>
@@ -86,6 +112,7 @@
     </tbody>
     <tfoot>
         <tr>
+            <td>7.0</td>
             <td>7.1</td>
             <td>7.2</td>
             <td>7.3</td>
@@ -94,6 +121,7 @@
             <td class="tcs-ignore">7.6</td>
         </tr>
         <tr>
+            <td>8.0</td>
             <td>8.1</td>
             <td class="tcs-ignore" colspan="2">8.2</td>
             <td>8.4</td>
@@ -102,10 +130,88 @@
         </tr>
     </tfoot>
 </table>
+<br>
+<br>
+<div class="interface">
+    <form>
+        <input type="checkbox" name="deselectOutTableClick" value="1"> deselectOutTableClick<br>
+        <input type="checkbox" name="selectIgnoreClass" value="1" checked> selectIgnoreClass
+        <br><br>
+
+        Y: <input type="number" name="coord1-y" value="5"> X: <input type="number" name="coord1-x" value="3"><br><br>
+        Y: <input type="number" name="coord2-y" value="6"> X: <input type="number" name="coord2-x" value="4"><br><br>
+
+        <button id="select">Select</button> <button id="select-all">Select all</button> <button id="deselect">Deselect</button><br><br>
+        <button id="copy">Copy</button> <button id="cut">Cut</button> <button id="paste">Paste</button><br><br>
+        <button id="destroy">Destroy</button> <button id="init">Init</button>
+    </form>
+</div>
 
 <script>
-    console.log('init');
-    var t = new TableCellSelector(document.getElementById("tcs-table"));
+    document.addEventListener("DOMContentLoaded", function(e) {
+        console.log('example');
+        var options = {deselectOutTableClick: false};
+        var table = document.getElementById("tcs-table");
+        var tcs = new TableCellSelector(document.getElementById("tcs-table"), options);
+
+        function getCoord() {
+            return [
+                [
+                    document.getElementsByName("coord1-y")[0].value,
+                    document.getElementsByName("coord1-x")[0].value
+                ],
+                [
+                    document.getElementsByName("coord2-y")[0].value,
+                    document.getElementsByName("coord2-x")[0].value
+                ]
+            ]
+        }
+
+        // options
+        document.getElementsByName("deselectOutTableClick")[0].onclick = function (e) {
+            tcs.destroy();
+            options["deselectOutTableClick"] = this.checked;
+            tcs = new TableCellSelector(table, options);
+        };
+        document.getElementsByName("selectIgnoreClass")[0].onclick = function (e) {
+            options["selectIgnoreClass"] = this.checked;
+            tcs.destroy();
+            tcs = new TableCellSelector(table, options);
+        };
+
+        // btns
+        document.getElementById("select").onclick = function (e) {
+            e.preventDefault();
+            var coords = getCoord();
+            var res = tcs.select(coords[0], coords[1]);
+            console.log("select = " + res);
+        };
+        document.getElementById("select-all").onclick = function (e) {
+            e.preventDefault();
+            var res = tcs.selectAll();
+            console.log("selectAll = " + res);
+        };
+        document.getElementById("deselect").onclick = function (e) {
+            e.preventDefault();
+            var res = tcs.deselect();
+            console.log("deselect = " + res);
+        };
+
+        document.getElementById("init").onclick = function (e) {
+            e.preventDefault();
+            tcs = new TableCellSelector(table, options);
+            console.log("init");
+        };
+        document.getElementById("destroy").onclick = function (e) {
+            e.preventDefault();
+            tcs.destroy();
+            console.log("destroy");
+        };
+
+    });
+
+
+
 </script>
 </body>
 </html>
