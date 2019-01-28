@@ -252,6 +252,12 @@ export default class Selector {
         }
     }
 
+    isIgnoredCell(cell) {
+        return hasClass(cell, _gOptions.ignoreClass) // td
+            || hasClass(cell.parentNode, _gOptions.ignoreClass) // tr
+            || hasClass(cell.parentNode.parentNode, _gOptions.ignoreClass); // example thead or tfoot
+    }
+
     isSelectedCell(cell) {
         return hasClass(cell, _gOptions.selectClass);
     }
@@ -353,13 +359,7 @@ export default class Selector {
     }
 
     selectCell(cell) {
-        const ignoreClass = _gOptions.ignoreClass;
-        if (
-            _gOptions.selectIgnoreClass
-            || !hasClass(cell, ignoreClass) // td
-            && !hasClass(cell.parentNode, ignoreClass) // tr
-            && !hasClass(cell.parentNode.parentNode, ignoreClass) // example thead or tfoot
-        ) {
+        if (_gOptions.selectIgnoreClass || !this.isIgnoredCell(cell)) {
             addClass(cell, _gOptions.selectClass);
             return true;
         }
