@@ -1,4 +1,5 @@
 import {_gOptions} from "./app";
+import {getElementsByTagNames} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Selector {
@@ -19,7 +20,7 @@ export default class Selector {
 
     deselectAll() {
         let length = 0;
-        let list = this.table.getElementsByTagName("td");
+        let list = getElementsByTagNames("td,th", this.table);
 
         for (let cell of list) {
             if (this.isSelectedCell(cell)) {
@@ -57,7 +58,7 @@ export default class Selector {
                     for (let ix = 0; ix < this.countCols; ix++) {
                         if (!(this.matrix[c[0]][ix][0] < 0) && !(this.matrix[c[0]][ix][1] < 0)) {
                             if (c[1] == ix) {
-                                return row.getElementsByTagName("td")[itd];
+                                return getElementsByTagNames("td,th", row)[itd];
                             }
                             itd++;
                         }
@@ -94,7 +95,7 @@ export default class Selector {
         // get extreme points
         let rows = this.table.getElementsByTagName("tr");
         for (let iy = 0; iy < this.countRows; iy++) {
-            let cols = rows[iy].getElementsByTagName("td");
+            let cols = getElementsByTagNames("td,th", rows[iy]);
             let itd = 0;
             for (let ix = 0; ix < this.countCols; ix++) {
                 if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
@@ -200,7 +201,7 @@ export default class Selector {
         this.countCols = 0;
 
         for (let row of rows) {
-            let length = row.getElementsByTagName("td").length;
+            let length = getElementsByTagNames("td, th", row).length;
             if (length > this.countCols) {
                 this.countCols = length;
             }
@@ -216,7 +217,7 @@ export default class Selector {
         let iy = 0;
         for (let row of rows) {
             let ix = 0;
-            let cols = row.getElementsByTagName("td");
+            let cols = getElementsByTagNames("td, th", row);
 
             for (let cell of cols) {
                 let colspan = cell.getAttribute("colspan");
@@ -306,7 +307,7 @@ export default class Selector {
 
                 let rows = this.table.getElementsByTagName("tr");
                 for (let iy = c1[0]; iy <= c2[0]; iy++) {
-                    let cols = rows[iy].getElementsByTagName("td");
+                    let cols = getElementsByTagNames("td, th", rows[iy]);
                     let itd = 0;
                     for (let ix = 0; ix < this.countCols; ix++) {
                         if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
@@ -342,7 +343,7 @@ export default class Selector {
 
     selectAll () {
         let length = 0;
-        let list = this.table.getElementsByTagName("td");
+        let list = getElementsByTagNames("td, th", this.table);
         for (let cell of list) {
             if (this.selectCell(cell)) {
                 length++;

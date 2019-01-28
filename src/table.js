@@ -1,5 +1,5 @@
 import {_gOptions} from "./app";
-import {getParentTag, isElement, on, off} from "./dom";
+import {getParentTags, isElement, on, off} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Table {
@@ -52,7 +52,7 @@ export default class Table {
         e.preventDefault();
         if (this.isRightMouseBtn(e)) return true;
 
-        let cell = getParentTag(e.target, "td");
+        let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
         this.isMouseDown = true;
@@ -64,7 +64,7 @@ export default class Table {
     onMouseOver(e) {
         if (!this.isMouseDown) return false;
 
-        let cell = getParentTag(e.target, "td");
+        let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
         this.obSelector.selectCell(cell);
@@ -80,7 +80,7 @@ export default class Table {
 
     onOutTableClick(e) {
         this.isMouseDown = false;
-        if (_gOptions.deselectOutTableClick && !getParentTag(e.target, "table")) {
+        if (_gOptions.deselectOutTableClick && !getParentTags(e.target, "table")) {
             this.obSelector.deselectAll();
         }
         if (_gOptions.destroySizeMatrix) {
