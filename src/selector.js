@@ -6,7 +6,6 @@ export default class Selector {
     countCols = 0;
     countRows = 0;
     matrix;
-    options;
     table;
 
     constructor (table) {
@@ -80,6 +79,14 @@ export default class Selector {
         } else {
             throw new Error("Invalid coordinate");
         }
+    }
+
+    getCountCols () {
+        return this.countCols;
+    }
+
+    getCountRows () {
+        return this.countRows;
     }
 
     /**

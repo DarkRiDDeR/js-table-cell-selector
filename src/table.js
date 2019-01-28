@@ -5,7 +5,6 @@ import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obSelector;
-    options;
     table; // html table
     _onMouseOver = (e) => this.onMouseOver(e);
     _onMouseDown = (e) => this.onMouseDown(e);
