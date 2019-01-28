@@ -2,6 +2,8 @@
 
 import Selector from "./selector";
 import Table from "./table";
+import Actions from "./actions";
+import {isEmpty} from "./funcs";
 
 
 const _GET_DATA_TEXT = "text"; // default
@@ -17,19 +19,33 @@ export let _gOptions = {
     selectableTableClass : 'tcs',// class added to table
     selectIgnoreClass: true,
     selectClass: 'tcs-select',
-    usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
+    //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
 };
 
 export default class TableCellSelector {
 
     obTable;
     obSelector;
+    obActions;
 
 
     constructor (table, options) {
         if (typeof options === "object") Object.assign(_gOptions, options);
-        this.obSelector = new Selector(table, _gOptions);
-        this.obTable = new Table(table, this.obSelector, _gOptions);
+        this.obSelector = new Selector(table);
+        this.obTable = new Table(table, this.obSelector);
+        this.obActions = new Actions(this.obSelector);
+    }
+
+    copy () {
+        let coords = this.obSelector.getSelectedRectangleCoords();
+        if (coords === false) return false;
+        return this.obActions.copy(coords[0], coords[1]);
+    }
+
+    cut () {
+        let coords = this.obSelector.getSelectedRectangleCoords();
+        if (isEmpty(coords)) return false;
+
     }
 
     deselect () {
@@ -67,10 +83,7 @@ export default class TableCellSelector {
 
     }
 
-    /**
-     *
-     * @returns {*}
-     */
+
     getCoords () {
         return this.obSelector.getSelectedRectangleCoords();
     }
@@ -79,7 +92,7 @@ export default class TableCellSelector {
 
     }
 
-    paste (positions, options) {
+    paste (coords, data) {
 
     }
 

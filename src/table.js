@@ -50,7 +50,6 @@ export default class Table {
 
     onMouseDown(e) {
         e.preventDefault();
-        if (!this.matrix && _gOptions.usingSizeMatrix) this.obSelector.initSizeMatrix();
         if (this.isRightMouseBtn(e)) return true;
 
         let cell = getParentTag(e.target, "td");
