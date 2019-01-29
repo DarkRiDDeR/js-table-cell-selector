@@ -1,5 +1,4 @@
-import {_gOptions, TableCellSelector} from "./app";
-import {isEmpty} from "./funcs";
+import {_gOptions} from "./app";
 import {getElementsByTagNames} from "./dom";
 
 export default class Actions {

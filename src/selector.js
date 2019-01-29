@@ -180,7 +180,7 @@ export default class Selector {
                     c1[1] += this.matrix[iy][c1[1]][1];
                     iy = c1[0] - 1;
                     loop = true;
-                   // break;
+                    // break;
                 }
             }
 
@@ -191,7 +191,7 @@ export default class Selector {
                     c2[1]++;
                     iy = c1[0] - 1;
                     loop = true;
-                   // break;
+                    // break;
                 }
             }
         }

@@ -32,7 +32,6 @@ var tcs = new TableCellSelector(table, options);
 | Name                    | Type             | Default                                                 | Description    |
 |-------------------------|------------------|---------------------------------------------------------|----------------|
 | deselectOutTableClick   | Bool             | true                                                    |                |
-| destroySizeMatrix       | Bool             | false                                                   |                |
 | getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                |
 | ignoreClass             | String           | 'tcs-ignore'                                            |                |
 | mergePastingGlue        | String           | ' '                                                     |                |

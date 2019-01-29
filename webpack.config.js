@@ -23,18 +23,19 @@ module.exports = (env, argv) => ({
             {
                 test: /\.(js)$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                use: [
+                    "babel-loader",
+                    "eslint-loader",
+                ],
             },
             {
-                 test: /\.(html)$/,
+                test: /\.(html)$/,
                 exclude: /node_modules/,
-                 use: {
-                     loader: "html-loader",
-                     options: {minimize: false}
-                 }
-             },
+                use: {
+                    loader: "html-loader",
+                    options: {minimize: false}
+                }
+            },
         ]
     },
     output: {
