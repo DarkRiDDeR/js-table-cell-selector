@@ -98,6 +98,10 @@ export default class TableCellSelector {
         this.obSelector.destroySizeMatrix();
     }
 
+    initSizeMatrix () {
+        this.obSelector.initSizeMatrix();
+    }
+
     getCoords () {
         return this.obSelector.getSelectedRectangleCoords();
     }

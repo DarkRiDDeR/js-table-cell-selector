@@ -90,6 +90,11 @@ destroySizeMatrix ()
 getCoords ()
 ```
 
+### initSizeMatrix
+```
+initSizeMatrix ()
+```
+
 ### paste
 ```
 paste (data [, c1 [, c2]])
