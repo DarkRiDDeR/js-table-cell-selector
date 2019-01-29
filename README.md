@@ -114,6 +114,6 @@ select (c1 [, c2])
 selectAll
 ```
 
-##License
+## License
 
 Apache 2.0
