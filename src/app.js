@@ -103,13 +103,24 @@ export default class TableCellSelector {
         return this.obSelector.getSelectedRectangleCoords();
     }
 
-    paste (data, c) {
-        if (c === undefined) {
+    /**
+     * Function: paste (data [, c1 [, c2]])
+     * @param data
+     * @param c1
+     * @param c2
+     * @returns {boolean}
+     */
+    paste (data, c1, c2) {
+        if (c1 === undefined) {
             let coords = this.obSelector.getSelectedRectangleCoords();
             if (isEmpty(coords)) return false;
-            c = coords[0];
+            [c1, c2] = coords;
+        } else if (c2 === undefined) {
+            c2 = c1;
+        } else {
+            [c1, c2] = this/this.obSelector.normalizeCoords(c1, c2);
         }
-        this.obActions.paste(data, c);
+        this.obActions.paste(data, c1, c2);
         return true;
     }
 

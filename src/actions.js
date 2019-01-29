@@ -91,20 +91,22 @@ export default class Actions {
         _gOptions.setCellFn(cell, cellVal, coord);
     }
 
-    paste (data, c) {
+    paste (data, c1, c2) {
         const matrix = this.obSelector.getSizeMatrix();
-        let rows = this.table.getElementsByTagName("tr");
-        let countR = this.obSelector.getCountRows();
-        let countC = this.obSelector.getCountCols();
+        const rows = this.table.getElementsByTagName("tr");
+        const countR = this.obSelector.getCountRows();
+        const countC = this.obSelector.getCountCols();
 
-        let maxY = c[0] + data.length;
+        let maxY = c1[0] + data.length;
         if (maxY > countR) maxY = countR;
+        if (maxY > c2[0]) maxY = c2[0]+1;
 
-        for (let iy = c[0]; iy < maxY; iy++) {
+        for (let iy = c1[0]; iy < maxY; iy++) {
             let cells = getElementsByTagNames("td,th", rows[iy]);
             let itd = 0;
-            let maxX = c[1] + data[iy-c[0]].length;
+            let maxX = c1[1] + data[iy-c1[0]].length;
             if (maxX > countC) maxX = countC;
+            if (maxX > c2[1]) maxX = c2[1]+1;
 
             for (let ix = 0; ix < maxX; ix++) {
                 if (matrix[iy][ix][0] < 0) {
@@ -114,19 +116,21 @@ export default class Actions {
                     for (let ix2 = 0; ix2 < maxX; ix2++) {
                         if (matrix[iy2][ix2][1] <= 0) {
                             if (ix2 == ix && !this.obSelector.isIgnoredCell(cells[itd2])) {
-                                this.mergeWithCell(cells2[itd2], data[iy - c[0]][ix - c[1]], [iy2, ix2 + matrix[iy2][ix2][1]]);
+                                this.mergeWithCell(cells2[itd2], data[iy - c1[0]][ix - c1[1]], [iy2, ix2 + matrix[iy2][ix2][1]]);
                                 if (!(matrix[iy2][ix2][1] < 0)) break;
                             }
                         } else {
                             itd2++;
                         }
                     }
-                } else if (matrix[iy][ix][1] < 0 && !this.obSelector.isIgnoredCell(cells[itd-1])) {
-                    let coord = [iy, ix + matrix[iy][ix][1]];
-                    this.mergeWithCell(cells[itd-1], data[iy - c[0]][ix - c[1]], coord);
+                } else if (matrix[iy][ix][1] < 0) {
+                    if (!this.obSelector.isIgnoredCell(cells[itd-1])) {
+                        let coord = [iy, ix + matrix[iy][ix][1]];
+                        this.mergeWithCell(cells[itd - 1], data[iy - c1[0]][ix - c1[1]], coord);
+                    }
                 } else {
-                    if (c[1] <= ix && !this.obSelector.isIgnoredCell(cells[itd])) {
-                        _gOptions.setCellFn(cells[itd], data[iy-c[0]][ix-c[1]], [iy, ix]);
+                    if (c1[1] <= ix && !this.obSelector.isIgnoredCell(cells[itd])) {
+                        _gOptions.setCellFn(cells[itd], data[iy-c1[0]][ix-c1[1]], [iy, ix]);
                     }
                     itd++;
                 }
