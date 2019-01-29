@@ -82,9 +82,6 @@ export default class Table {
         if (_gOptions.deselectOutTableClick && !getParentTags(e.target, "table")) {
             this.obSelector.deselectAll();
         }
-        if (_gOptions.destroySizeMatrix) {
-            this.obSelector.destroySizeMatrix();
-        }
     }
 
     removeEvents() {

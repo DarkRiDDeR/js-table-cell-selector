@@ -7,7 +7,6 @@ import {isEmpty} from "./funcs";
 
 export let _gOptions = {
     deselectOutTableClick: true,
-    destroySizeMatrix: false, // when out table click. Clear memory for big table or changing tables
     getCellFn: function (cell, coord) {
         return cell.innerText;
     },
@@ -36,9 +35,9 @@ export default class TableCellSelector {
     }
 
     /**
-     * Function: clear ([c1 [, c2]])
-     * @param c1
-     * @param c2
+     * clear ([c1 [, c2]])
+     * @param c1 - starting position [0, 0]
+     * @param c2 - end position [1, 1]
      */
     clear (c1, c2) {
         if (c1 === undefined) {
@@ -50,10 +49,10 @@ export default class TableCellSelector {
     }
 
     /**
-     * Function: copy ([c1 [, c2]])
-     * @param c1
-     * @param c2
-     * @returns {array[][]}
+     * copy ([c1 [, c2]])
+     * @param c1 - starting position [0, 0]
+     * @param c2 - end position [1, 1]
+     * @returns {array[][] | false}
      */
     copy (c1, c2) {
         if (c1 === undefined) {
@@ -65,10 +64,10 @@ export default class TableCellSelector {
     }
 
     /**
-     * Function: cut ([c1 [, c2]])
-     * @param c1
-     * @param c2
-     * @returns {array[][]}
+     * cut ([c1 [, c2]])
+     * @param c1 - starting position [0, 0]
+     * @param c2 - end position [1, 1]
+     * @returns {array[][] | false}
      */
     cut (c1, c2) {
         if (c1 === undefined) {
@@ -104,10 +103,10 @@ export default class TableCellSelector {
     }
 
     /**
-     * Function: paste (data [, c1 [, c2]])
-     * @param data
-     * @param c1
-     * @param c2
+     * paste (data [, c1 [, c2]])
+     * @param data - array[][]
+     * @param c1 - starting position [0, 0]
+     * @param c2 - end position [1, 1]
      * @returns {boolean}
      */
     paste (data, c1, c2) {
@@ -125,7 +124,7 @@ export default class TableCellSelector {
     }
 
     /**
-     * select cells. Fn: select (c1 [, c2])
+     * select (c1 [, c2])
      * @param c1 - starting position [0, 0]
      * @param c2 - end position [1, 1]
      * @returns {boolean}
