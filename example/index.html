@@ -3,12 +3,12 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>The HTML5 Herald</title>
+    <title>JS Table Cell Selector</title>
     <style>
         table {
             border-collapse: collapse;
         }
-        table td {
+        table td, table th {
             border: solid #000 1px;
             padding: 5px;
             width: 30px;
@@ -41,7 +41,7 @@
             width: 3em;
         }
     </style>
-<script type="text/javascript" src="tcs.bundle.min.js"></script></head>
+<script type="text/javascript" src="../dist/tcs.bundle.min.js"></script></head>
 
 <body>
 <h1>JS Table Cell Selector</h1>
@@ -49,16 +49,16 @@
 <table id="tcs-table">
     <thead>
         <tr class="tcs-ignore">
-            <td>0.0</td>
-            <td>0.1</td>
-            <td>0.2</td>
-            <td>0.3</td>
-            <td>0.4</td>
-            <td>0.5</td>
-            <td>0.6</td>
+            <th>0.0</th>
+            <th>0.1</th>
+            <th>0.2</th>
+            <th>0.3</th>
+            <th>0.4</th>
+            <th>0.5</th>
+            <th>0.6</th>
         </tr>
         <tr class="">
-            <td>1.0</td>
+            <th>1.0</th>
             <td>1.1</td>
             <td>1.2</td>
             <td>1.3</td>
@@ -67,7 +67,7 @@
             <td>1.6</td>
         </tr>
         <tr>
-            <td>2.0</td>
+            <th>2.0</th>
             <td>2.1</td>
             <td>2.2</td>
             <td>2.3</td>
@@ -78,7 +78,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>3.0</td>
+            <th>3.0</th>
             <td>3.1</td>
             <td class="tcs-ignore">3.2</td>
             <td>3.3</td>
@@ -87,7 +87,7 @@
             <td>3.6</td>
         </tr>
         <tr>
-            <td>4.0</td>
+            <th>4.0</th>
             <td>4.1</td>
             <td>4.2</td>
             <td>4.3</td>
@@ -95,14 +95,14 @@
             <td>4.6</td>
         </tr>
         <tr>
-            <td>5.0</td>
+            <th>5.0</th>
             <td>5.1</td>
             <td class="tcs-ignore" rowspan="2">5.2</td>
             <td>5.3</td>
             <td>5.6</td>
         </tr>
         <tr>
-            <td>6.0</td>
+            <th>6.0</th>
             <td>6.1</td>
             <td>6.3</td>
             <td>6.4</td>
@@ -112,7 +112,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td>7.0</td>
+            <th>7.0</th>
             <td>7.1</td>
             <td>7.2</td>
             <td>7.3</td>
@@ -121,7 +121,7 @@
             <td class="tcs-ignore">7.6</td>
         </tr>
         <tr>
-            <td>8.0</td>
+            <th>8.0</th>
             <td>8.1</td>
             <td class="tcs-ignore" colspan="2">8.2</td>
             <td>8.4</td>
@@ -138,19 +138,31 @@
         <input type="checkbox" name="selectIgnoreClass" value="1" checked> selectIgnoreClass
         <br><br>
 
-        Y: <input type="number" name="coord1-y" value="5"> X: <input type="number" name="coord1-x" value="3"><br><br>
-        Y: <input type="number" name="coord2-y" value="6"> X: <input type="number" name="coord2-x" value="4"><br><br>
+        Y1: <input type="number" name="coord1-y" value="5"> X1: <input type="number" name="coord1-x" value="3"><br><br>
+        Y2: <input type="number" name="coord2-y" value="6"> X2: <input type="number" name="coord2-x" value="4"><br><br>
 
-        <button id="select">Select</button> <button id="select-all">Select all</button> <button id="deselect">Deselect</button><br><br>
-        <button id="copy">Copy</button> <button id="cut">Cut</button> <button id="paste">Paste</button><br><br>
-        <button id="destroy">Destroy</button> <button id="init">Init</button>
-    </form>
+        <button id="select">Select</button>
+        <button id="select-all">Select all</button>
+        <button id="deselect">Deselect</button>
+        <button id="coords">Get coordinates</button>
+        <br><br>
+
+        <button id="clear">Clear</button>
+        <button id="copy">Copy</button>
+        <button id="cut">Cut</button>
+        <button id="paste">Paste</button> (array for pasting: [[a, b, c], [d, e, f], [g, h, i]]
+        <br><br>
+
+        <button id="destroy">Destroy</button>
+        <button id="init">Init</button>
+    </form><br>
+    <b>Open the browser console!!!</b>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function(e) {
         console.log('example');
-        var options = {deselectOutTableClick: false};
+        var options = {deselectOutTableClick: false, usingSizeMatrix: true};
         var table = document.getElementById("tcs-table");
         var tcs = new TableCellSelector(document.getElementById("tcs-table"), options);
 
@@ -196,6 +208,38 @@
             var res = tcs.deselect();
             console.log("deselect = " + res);
         };
+        document.getElementById("coords").onclick = function (e) {
+            e.preventDefault();
+            var res = tcs.getCoords();
+            console.log("coords = " + (res ? "[["+res[0]+"],["+res[1]+"]]" : res));
+        };
+
+        document.getElementById("clear").onclick = function (e) {
+            e.preventDefault();
+            console.log("clear");
+            tcs.clear();
+        };
+        document.getElementById("copy").onclick = function (e) {
+            e.preventDefault();
+            console.log("copy");
+            console.log(tcs.copy());
+        };
+        document.getElementById("cut").onclick = function (e) {
+            e.preventDefault();
+            console.log("cut");
+            console.log(tcs.cut());
+        };
+        document.getElementById("paste").onclick = function (e) {
+            e.preventDefault();
+            console.log("paste");
+            tcs.paste(
+                [
+                    ["a", "b", "c"],
+                    ["d", "e", "f"],
+                    ["g", "h", "i"]
+                ]
+            );
+        };
 
         document.getElementById("init").onclick = function (e) {
             e.preventDefault();
@@ -207,11 +251,7 @@
             tcs.destroy();
             console.log("destroy");
         };
-
     });
-
-
-
 </script>
 </body>
 </html>

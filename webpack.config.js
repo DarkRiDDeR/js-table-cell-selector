@@ -1,13 +1,11 @@
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
-const devMode = process.env.NODE_ENV !== 'build';
-const SRC_DIR = __dirname + '/src';
-const DIST_DIR = __dirname + '/dist';
+const SRC_DIR = __dirname + "/src";
+const DIST_DIR = __dirname + "/dist";
+const EXAMPLE_DIR = __dirname + "/example";
 
-module.exports = {
+module.exports = (env, argv) => ({
     optimization: {
         minimizer: [
             new UglifyJsPlugin({
@@ -26,14 +24,14 @@ module.exports = {
                 test: /\.(js)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader'
+                    loader: "babel-loader"
                 }
             },
             {
                  test: /\.(html)$/,
-                 exclude: /node_modules/,
+                exclude: /node_modules/,
                  use: {
-                     loader: 'html-loader',
+                     loader: "html-loader",
                      options: {minimize: false}
                  }
              },
@@ -41,17 +39,15 @@ module.exports = {
     },
     output: {
         path: DIST_DIR,
-        publicPath: '/',
+        publicPath: argv.mode !== "production" ? "/" : "../dist/",
         filename: "tcs.bundle.min.js"
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: __dirname + '/index.html',
-            inject: 'head',
-        }),
-        new CopyWebpackPlugin([{
-            from: __dirname + '/index.html'
-        }])
+            template: __dirname + "/index.html",
+            filename: (argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR) + "/index.html",
+            inject: "head",
+        })
     ],
     devServer: {
         contentBase: SRC_DIR,
@@ -59,5 +55,5 @@ module.exports = {
         port: 9000,
         open: true
     }
-};
+});
 
