@@ -1,4 +1,7 @@
 # JS Table Cell Selector
+
+[![Build Status](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector.svg?branch=master)](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector)
+
 JS library allows you to select cells of HTML tables as well as cleaning, coping, cutting and pasting data of table
 
 ## Demo
