@@ -1,7 +1,14 @@
 import {_gOptions} from "./app";
 import {getElementsByTagNames} from "./dom";
 
+
+const _TYPE_CLEAR = "clear";
+const _TYPE_COPY = "copy";
+const _TYPE_CUT = "cut";
+const _TYPE_PASTE = "paste";
+
 export default class Actions {
+    _action;
     obSelector;
     table;
 
@@ -25,6 +32,7 @@ export default class Actions {
         this.iterateCells(c1, c2, (iy, ix, cell) => {
             ar[iy-c1[0]][ix-c1[1]] = _gOptions.getCellFn(cell, [iy, ix]);
         });
+        this._action = this.TYPE_COPY;
         return ar;
     }
 
@@ -40,6 +48,7 @@ export default class Actions {
                 _gOptions.setCellFn(cell, "", [iy, ix]);
             }
         });
+        this._action = this.TYPE_CLEAR;
     }
 
     /**
@@ -59,7 +68,12 @@ export default class Actions {
                 _gOptions.setCellFn(cell, "", [iy, ix]);
             }
         });
+        this._action = this.TYPE_CUT;
         return ar;
+    }
+
+    getAction () {
+        return this._action;
     }
 
     getCellData (cell) {
@@ -135,5 +149,19 @@ export default class Actions {
                 }
             }
         }
+        this._action = this.TYPE_PASTE;
+    }
+
+    static get TYPE_CLEAR () {
+        return _TYPE_CLEAR;
+    }
+    static get TYPE_COPY () {
+        return _TYPE_COPY;
+    }
+    static get TYPE_CUT () {
+        return _TYPE_CUT;
+    }
+    static get TYPE_PASTE () {
+        return _TYPE_PASTE;
     }
 }

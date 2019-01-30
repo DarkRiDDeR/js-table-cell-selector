@@ -1,12 +1,15 @@
 "use strict";
 
+import Actions from "./actions";
+import Buffer from "./buffer";
+import {isEmpty} from "./funcs";
 import Selector from "./selector";
 import Table from "./table";
-import Actions from "./actions";
-import {isEmpty} from "./funcs";
+require("./lib/sheetclip.js");
 
 export let _gOptions = {
     deselectOutTableClick: true,
+    enablePasting: true,
     getCellFn: function (cell, coord) {
         return cell.innerText;
     },
@@ -30,8 +33,9 @@ export default class TableCellSelector {
     constructor (table, options) {
         if (typeof options === "object") Object.assign(_gOptions, options);
         this.obSelector = new Selector(table);
-        this.obTable = new Table(table, this.obSelector);
+        this.obTable = new Table(table, this.obSelector, this);
         this.obActions = new Actions(this.obSelector);
+        this.obBuffer = new Buffer(table);
     }
 
     /**
@@ -60,7 +64,12 @@ export default class TableCellSelector {
             if (coords === false) return false;
             [c1, c2] = coords;
         }
-        return this.obActions.copy(c1, c2);
+        const data = this.obActions.copy(c1, c2);
+        if (data !== false) {
+            let str = window.SheetClip.stringify(data);
+            this.obBuffer.copy(str);
+        }
+        return data;
     }
 
     /**
@@ -75,7 +84,12 @@ export default class TableCellSelector {
             if (isEmpty(coords)) return false;
             [c1, c2] = coords;
         }
-        return this.obActions.cut(c1, c2);
+        const data = this.obActions.cut(c1, c2);
+        if (data !== false) {
+            let str = window.SheetClip.stringify(data);
+            this.obBuffer.copy(str);
+        }
+        return data;
     }
 
     deselect () {
@@ -84,10 +98,12 @@ export default class TableCellSelector {
 
     destroy () {
         this.deselect();
+        this.obBuffer.destroy();
         this.obTable.destroy();
-        delete this.obTable;
-        delete this.obSelector;
         delete this.obActions;
+        delete this.obBuffer;
+        delete this.obSelector;
+        delete this.obTable;
         delete this;
     }
 
@@ -124,6 +140,8 @@ export default class TableCellSelector {
             [c1, c2] = this/this.obSelector.normalizeCoords(c1, c2);
         }
         this.obActions.paste(data, c1, c2);
+        console.log(this.obBuffer.paste());
+
         return true;
     }
 
