@@ -7,9 +7,11 @@ export default class Table {
     obApp;
     obSelector;
     table; // html table
-    _onKeyDown = (e) => this.onKeyDown(e);
+    _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);
     _onMouseDown = (e) => this.onMouseDown(e);
+    _onMouseEnter = (e) => this.onMouseEnter(e);
+    _onMouseLeave = (e) => this.onMouseLeave(e);
     _onMouseUp = (e) => this.onMouseUp(e);
     _onOutTableClick = (e) => this.onOutTableClick(e);
 
@@ -26,9 +28,10 @@ export default class Table {
     }
 
     addEvents() {
-        on(document.body, "keydown", this._onKeyDown);
         on(this.table, "mouseover", this._onMouseOver);
         on(this.table, "mousedown", this._onMouseDown);
+        on(this.table, "mouseenter", this._onMouseEnter);
+        on(this.table, "mouseleave", this._onMouseLeave);
         on(this.table, "mouseup", this._onMouseUp);
         on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
@@ -36,6 +39,10 @@ export default class Table {
     destroy() {
         removeClass(this.table, _gOptions.selectableTableClass);
         this.removeEvents();
+    }
+
+    get isMouse () {
+        return this._isMouse;
     }
 
     isRightMouseBtn(e) {
@@ -48,24 +55,6 @@ export default class Table {
             isRightMB = e.button == 2;
 
         return isRightMB;
-    }
-
-    onKeyDown (e) {
-        e = e || window.event;
-        var key = e.which || e.keyCode; // keyCode detection
-        var ctrl = e.ctrlKey ? e.ctrlKey : ((key === 17) ? true : false); // ctrl detection
-
-        if (ctrl) {
-            if ( key == 67 ) { // c
-                this.obApp.copy();
-            } else if ( key == 86 ) { // v
-                //this.obApp.copy();
-            } else if ( key == 88 ) { // x
-                this.obApp.cut();
-            } else if ( key == 46 || key == 8 ) { // delete or backspase
-                this.obApp.clear();
-            }
-        }
     }
 
     onMouseDown(e) {
@@ -93,6 +82,14 @@ export default class Table {
         if (coords !== false) this.obSelector.select(coords[0], coords[1]);
     }
 
+    onMouseEnter (e) {
+        this._isMouse = true;
+    }
+
+    onMouseLeave (e) {
+        this._isMouse = false;
+    }
+
     onMouseUp(e) {
         this.isMouseDown = false;
     }
@@ -105,9 +102,10 @@ export default class Table {
     }
 
     removeEvents() {
-        off(document.body, "keydown", this._onKeyDown);
         off(this.table, "mouseover", this._onMouseOver);
         off(this.table, "mousedown", this._onMouseDown);
+        off(this.table, "mouseenter", this._onMouseEnter);
+        off(this.table, "mouseleave", this._onMouseLeave);
         off(this.table, "mouseup", this._onMouseUp);
         off(this.table.ownerDocument, "click", this._onOutTableClick);
     }

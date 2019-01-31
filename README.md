@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector.svg?branch=master)](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector)
 
-JS library allows you to select cells of HTML tables as well as cleaning, coping, cutting and pasting data of table
+JS library allows you to select cells of HTML tables as well as cleaning, coping, cutting and pasting data of table.
+
+Supported copy/cut/paste to spreadsheets such as Microsoft Excel, Google Docs, LibreOffice and OpenOffice.
 
 ## Demo
 See [demo](http://darkridder.github.io/js-table-cell-selector/example/).
@@ -25,10 +27,21 @@ import TableCellSelector from "./js-table-cell-selector/src/app";
 ## Usage
 
 ```javascript
-var options = {deselectOutTableClick: false};
 var table = document.getElementById("tcs-table");
-var tcs = new TableCellSelector(table, options);
+var options = {deselectOutTableClick: false};
+var buffer = new TableCellSelector.Buffer();
+var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, buffer);
 ```
+
+## Keyboard shortcuts
+
+- Ctrl + A — select all
+- Ctrl + C — copy
+- Ctrl + V — paste
+- Ctrl + X — cut
+- Ctrl + (Backspace or Delete) — clear
+
+**Note:** *operations for the browser buffer only work when `TableCellSelector.Buffer` is initialized.*
 
 ## Options
 
@@ -118,7 +131,7 @@ select (c1 [, c2])
 
 ### selectAll
 ```
-selectAll
+selectAll()
 ```
 
 ## License

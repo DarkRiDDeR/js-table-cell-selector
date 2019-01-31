@@ -1,10 +1,11 @@
 "use strict";
 
 import Actions from "./actions";
-import Buffer from "./buffer";
+import _Buffer from "./buffer";
 import {isEmpty} from "./funcs";
 import Selector from "./selector";
 import Table from "./table";
+import {off, on} from "./dom";
 require("./lib/sheetclip.js");
 
 export let _gOptions = {
@@ -26,16 +27,23 @@ export let _gOptions = {
 };
 
 export default class TableCellSelector {
-    obTable;
-    obSelector;
     obActions;
+    obBuffer;
+    obSelector;
+    obTable;
+    _onKeyDown = (e) => this.onKeyDown(e);
 
-    constructor (table, options) {
+    constructor (table, options, buffer) {
         if (typeof options === "object") Object.assign(_gOptions, options);
         this.obSelector = new Selector(table);
         this.obTable = new Table(table, this.obSelector, this);
         this.obActions = new Actions(this.obSelector);
-        this.obBuffer = new Buffer(table);
+        this.obBuffer = buffer;
+        on(document.body, "keydown", this._onKeyDown);
+    }
+
+    static get Buffer () {
+        return _Buffer;
     }
 
     /**
@@ -65,7 +73,7 @@ export default class TableCellSelector {
             [c1, c2] = coords;
         }
         const data = this.obActions.copy(c1, c2);
-        if (data !== false) {
+        if (this.obBuffer instanceof _Buffer &&  data !== false) {
             let str = window.SheetClip.stringify(data);
             this.obBuffer.copy(str);
         }
@@ -85,7 +93,7 @@ export default class TableCellSelector {
             [c1, c2] = coords;
         }
         const data = this.obActions.cut(c1, c2);
-        if (data !== false) {
+        if (this.obBuffer instanceof _Buffer && data !== false) {
             let str = window.SheetClip.stringify(data);
             this.obBuffer.copy(str);
         }
@@ -96,17 +104,6 @@ export default class TableCellSelector {
         return this.obSelector.deselectAll();
     }
 
-    destroy () {
-        this.deselect();
-        this.obBuffer.destroy();
-        this.obTable.destroy();
-        delete this.obActions;
-        delete this.obBuffer;
-        delete this.obSelector;
-        delete this.obTable;
-        delete this;
-    }
-
     /**
      * destroy size matrix for big table or changing tables
      */
@@ -114,12 +111,44 @@ export default class TableCellSelector {
         this.obSelector.destroySizeMatrix();
     }
 
+    getCoords () {
+        return this.obSelector.getSelectedRectangleCoords();
+    }
+
     initSizeMatrix () {
         this.obSelector.initSizeMatrix();
     }
 
-    getCoords () {
-        return this.obSelector.getSelectedRectangleCoords();
+    onKeyDown (e) {
+        e = e || window.event;
+        var key = e.which || e.keyCode; // keyCode detection
+        var ctrl = e.ctrlKey ? e.ctrlKey : (key === 17); // ctrl detection
+
+        if (this.obTable.isMouse && ctrl) {
+            switch (key) {
+            case 65: // a
+                e.preventDefault();
+                this.selectAll();
+                break;
+            case 67: // c
+                this.copy();
+                break;
+            case 86: // v
+                if (this.obBuffer instanceof _Buffer) {
+                    this.obBuffer.paste((str) => {
+                        this.paste(window.SheetClip.parse(str));
+                    });
+                }
+                break;
+            case 88: // x
+                this.cut();
+                break;
+            case 46: // delete
+            case 8: // backspase
+                this.clear();
+                break;
+            }
+        }
     }
 
     /**
@@ -139,10 +168,8 @@ export default class TableCellSelector {
         } else {
             [c1, c2] = this/this.obSelector.normalizeCoords(c1, c2);
         }
-        this.obActions.paste(data, c1, c2);
-        console.log(this.obBuffer.paste());
 
-        return true;
+        this.obActions.paste(data, c1, c2);
     }
 
     /**
@@ -158,6 +185,20 @@ export default class TableCellSelector {
 
     selectAll () {
         return this.obSelector.selectAll();
+    }
+
+    destroy () {
+        off(document.body, "keydown", this._onKeyDown);
+        this.deselect();
+        this.obBuffer.destroy();
+        this.obTable.destroy();
+
+        delete
+        this.obActions,
+        this.obBuffer,
+        this.obSelector,
+        this.obTable,
+        this;
     }
 }
 

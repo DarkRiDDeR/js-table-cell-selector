@@ -162,9 +162,10 @@
 <script>
     document.addEventListener("DOMContentLoaded", function(e) {
         console.log('example');
-        var options = {deselectOutTableClick: false, usingSizeMatrix: true};
         var table = document.getElementById("tcs-table");
-        var tcs = new TableCellSelector(document.getElementById("tcs-table"), options);
+        var options = {deselectOutTableClick: false};
+        var buffer = new TableCellSelector.Buffer();
+        var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, buffer);
 
         function getCoord() {
             return [
