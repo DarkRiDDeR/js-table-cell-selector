@@ -62,12 +62,8 @@ export default class Actions {
         return ar;
     }
 
-    getCellData (cell) {
-        return cell.innerHTML;
-    }
-
     iterateCells (c1, c2, callbackFn) {
-        const matrix = this.obSelector.getSizeMatrix();
+        const matrix = this.obSelector.sizeMatrix;
         let rows = this.table.getElementsByTagName("tr");
         for (let iy = c1[0]; iy <= c2[0]; iy++) {
             let cells = getElementsByTagNames("td,th", rows[iy]);
@@ -87,7 +83,7 @@ export default class Actions {
     }
 
     paste (data, c1, c2) {
-        const matrix = this.obSelector.getSizeMatrix();
+        const matrix = this.obSelector.sizeMatrix;
         const rows = this.table.getElementsByTagName("tr");
         const countR = this.obSelector.countRows;
         const countC = this.obSelector.countCols;

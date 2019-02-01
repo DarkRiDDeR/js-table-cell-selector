@@ -132,7 +132,7 @@ export default class Selector {
         return isSelected ? [c1, c2] : false;
     }
 
-    getSizeMatrix () {
+    get sizeMatrix () {
         return this.matrix;
     }
 

@@ -178,9 +178,9 @@ export default class TableCellSelector {
         } else if (c2 === undefined) {
             c2 = c1;
         } else {
-            [c1, c2] = this/this.obSelector.normalizeCoords(c1, c2);
+            [c1, c2] = this.obSelector.normalizeCoords(c1, c2);
         }
-
+        [c1, c2] = this.obSelector.getRectangleCoords(c1, c2);
         this.obActions.paste(data, c1, c2);
     }
 
