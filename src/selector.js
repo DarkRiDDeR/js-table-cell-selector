@@ -3,8 +3,8 @@ import {getElementsByTagNames} from "./dom";
 import {isEmpty, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Selector {
-    countCols = 0;
-    countRows = 0;
+    _countCols = 0;
+    _countRows = 0;
     matrix;
     table;
 
@@ -31,8 +31,8 @@ export default class Selector {
     }
 
     destroySizeMatrix() {
-        this.countCols = undefined;
-        this.countRows = undefined;
+        this._countCols = undefined;
+        this._countRows = undefined;
         this.matrix = undefined;
     }
 
@@ -52,16 +52,8 @@ export default class Selector {
                     if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
                     if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
 
-                    let itd = 0;
                     let row = this.table.getElementsByTagName("tr")[c[0]];
-                    for (let ix = 0; ix < this.countCols; ix++) {
-                        if (!(this.matrix[c[0]][ix][0] < 0) && !(this.matrix[c[0]][ix][1] < 0)) {
-                            if (c[1] == ix) {
-                                return getElementsByTagNames("td,th", row)[itd];
-                            }
-                            itd++;
-                        }
-                    }
+                    return getElementsByTagNames("td,th", row)[this.matrix[c[0]][c[1]][2]];
                 }
                 /*} else {
                     let rows = this.table.getElementsByTagName("tr");
@@ -81,12 +73,12 @@ export default class Selector {
         }
     }
 
-    getCountCols () {
-        return this.countCols;
+    get countCols () {
+        return this._countCols;
     }
 
-    getCountRows () {
-        return this.countRows;
+    get countRows () {
+        return this._countRows;
     }
 
     /**
@@ -102,20 +94,20 @@ export default class Selector {
         // get extreme points
         let rows = this.table.getElementsByTagName("tr");
         for (let iy = 0; iy < this.countRows; iy++) {
-            let cols = getElementsByTagNames("td,th", rows[iy]);
-            let itd = 0;
+            let cells = getElementsByTagNames("td,th", rows[iy]);
             for (let ix = 0; ix < this.countCols; ix++) {
-                if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                    if (this.isSelectedCell(cols[itd])) {
-                        isSelected = true;
+                if (
+                    !(this.matrix[iy][ix][0] < 0)
+                    && !(this.matrix[iy][ix][1] < 0)
+                    && this.isSelectedCell(cells[this.matrix[iy][ix][2]])
+                ) {
+                    isSelected = true;
 
-                        if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
-                        if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
+                    if (c1[0] === undefined || c1[0] > iy) c1[0] = iy;
+                    if (c1[1] === undefined || c1[1] > ix) c1[1] = ix;
 
-                        if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
-                        if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
-                    }
-                    itd++;
+                    if (c2[0] === undefined || c2[0] < iy) c2[0] = iy;
+                    if (c2[1] === undefined || c2[1] < ix) c2[1] = ix;
                 }
             }
         }
@@ -204,13 +196,13 @@ export default class Selector {
 
     initSizeMatrix () {
         let rows = this.table.getElementsByTagName("tr");
-        this.countRows = rows.length;
-        this.countCols = 0;
+        this._countRows = rows.length;
+        this._countCols = 0;
 
         for (let row of rows) {
             let length = getElementsByTagNames("td, th", row).length;
             if (length > this.countCols) {
-                this.countCols = length;
+                this._countCols = length;
             }
         }
 
@@ -224,13 +216,14 @@ export default class Selector {
         let iy = 0;
         for (let row of rows) {
             let ix = 0;
-            let cols = getElementsByTagNames("td, th", row);
+            let cells = getElementsByTagNames("td, th", row);
 
-            for (let cell of cols) {
+            for (let itd = 0; itd < cells.length; itd++) {
+                const cell = cells[itd];
                 let colspan = cell.getAttribute("colspan");
                 let rowspan = cell.getAttribute("rowspan");
-                if (colspan > 1) this.matrix[iy][ix][1] = 0;
                 if (rowspan > 1) this.matrix[iy][ix][0] = 0;
+                if (colspan > 1) this.matrix[iy][ix][1] = 0;
 
                 while (ix < this.countCols && rowCrest[ix]) {
                     rowCrest[ix]--;
@@ -240,18 +233,15 @@ export default class Selector {
                 }
 
                 if (colspan > 1) {
+                    this.matrix[iy][ix][2] = itd;
                     for (let i = 0; i > -colspan; i--) {
                         this.matrix[iy][ix][1] = i;
-
-                        if (rowspan > 1) {
-                            rowCrest[ix] = rowspan - 1;
-                        }
+                        if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                         ix++;
                     }
                 } else {
-                    if (rowspan > 1) {
-                        rowCrest[ix] = rowspan - 1;
-                    }
+                    this.matrix[iy][ix][2] = itd;
+                    if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                     ix++;
                 }
             }
@@ -320,18 +310,15 @@ export default class Selector {
 
                 let rows = this.table.getElementsByTagName("tr");
                 for (let iy = c1[0]; iy <= c2[0]; iy++) {
-                    let cols = getElementsByTagNames("td, th", rows[iy]);
-                    let itd = 0;
-                    for (let ix = 0; ix < this.countCols; ix++) {
+                    let cells = getElementsByTagNames("td, th", rows[iy]);
+                    for (let ix = c1[1]; ix <= c2[1]; ix++) {
                         if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                            if (c1[1] <= ix && ix <= c2[1]) {
-                                let result = this.selectCell(cols[itd]);
-                                if (!isSelected) isSelected = result;
-                            }
-                            itd++;
+                            let result = this.selectCell(cells[this.matrix[iy][ix][2]]);
+                            if (!isSelected) isSelected = result;
                         }
                     }
                 }
+
                 /*} else {
 
                     let rows = this.table.getElementsByTagName("tr");

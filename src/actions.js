@@ -71,13 +71,9 @@ export default class Actions {
         let rows = this.table.getElementsByTagName("tr");
         for (let iy = c1[0]; iy <= c2[0]; iy++) {
             let cells = getElementsByTagNames("td,th", rows[iy]);
-            let itd = 0;
-            for (let ix = 0; ix < matrix[iy].length; ix++) {
+            for (let ix = c1[1]; ix <= c2[1]; ix++) {
                 if (!(matrix[iy][ix][0] < 0) && !(matrix[iy][ix][1] < 0)) {
-                    if (c1[1] <= ix && ix <= c2[1]) {
-                        callbackFn(iy, ix, cells[itd]);
-                    }
-                    itd++;
+                    callbackFn(iy, ix, cells[matrix[iy][ix][2]]);
                 }
             }
         }
@@ -93,45 +89,33 @@ export default class Actions {
     paste (data, c1, c2) {
         const matrix = this.obSelector.getSizeMatrix();
         const rows = this.table.getElementsByTagName("tr");
-        const countR = this.obSelector.getCountRows();
-        const countC = this.obSelector.getCountCols();
+        const countR = this.obSelector.countRows;
+        const countC = this.obSelector.countCols;
 
         let maxY = c1[0] + data.length;
         if (maxY > countR) maxY = countR;
         if (maxY > c2[0]) maxY = c2[0]+1;
 
         for (let iy = c1[0]; iy < maxY; iy++) {
-            let cells = getElementsByTagNames("td,th", rows[iy]);
-            let itd = 0;
             let maxX = c1[1] + data[iy-c1[0]].length;
             if (maxX > countC) maxX = countC;
             if (maxX > c2[1]) maxX = c2[1]+1;
 
-            for (let ix = 0; ix < maxX; ix++) {
-                if (matrix[iy][ix][0] < 0) {
-                    let iy2 = iy + matrix[iy][ix][0];
-                    let itd2 = 0;
-                    let cells2 = getElementsByTagNames("td,th", rows[iy2]);
-                    for (let ix2 = 0; ix2 < maxX; ix2++) {
-                        if (matrix[iy2][ix2][1] <= 0) {
-                            if (ix2 == ix && !this.obSelector.isIgnoredCell(cells[itd2])) {
-                                this.mergeWithCell(cells2[itd2], data[iy - c1[0]][ix - c1[1]], [iy2, ix2 + matrix[iy2][ix2][1]]);
-                                if (!(matrix[iy2][ix2][1] < 0)) break;
-                            }
-                        } else {
-                            itd2++;
-                        }
-                    }
-                } else if (matrix[iy][ix][1] < 0) {
-                    if (!this.obSelector.isIgnoredCell(cells[itd-1])) {
-                        let coord = [iy, ix + matrix[iy][ix][1]];
-                        this.mergeWithCell(cells[itd - 1], data[iy - c1[0]][ix - c1[1]], coord);
-                    }
+            let cellFn;
+            for (let ix = c1[1]; ix < maxX; ix++) {
+                let y = iy;
+                let x = ix;
+                if (matrix[iy][ix][1] < 0 || matrix[iy][ix][0] < 0) {
+                    if (matrix[iy][ix][0] < 0) y += matrix[iy][ix][0];
+                    if (matrix[iy][ix][1] < 0) x += matrix[iy][ix][1];
+                    cellFn = this.mergeWithCell;
                 } else {
-                    if (c1[1] <= ix && !this.obSelector.isIgnoredCell(cells[itd])) {
-                        _gOptions.setCellFn(cells[itd], data[iy-c1[0]][ix-c1[1]], [iy, ix]);
-                    }
-                    itd++;
+                    cellFn = _gOptions.setCellFn;
+                }
+
+                let cell = getElementsByTagNames("td,th", rows[y])[matrix[y][x][2]];
+                if (!this.obSelector.isIgnoredCell(cell)) {
+                    cellFn(cell, data[iy - c1[0]][ix - c1[1]], [y, x]);
                 }
             }
         }
