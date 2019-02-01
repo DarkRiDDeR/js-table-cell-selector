@@ -1,6 +1,8 @@
 # JS Table Cell Selector
 
 [![Build Status](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector.svg?branch=master)](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector)
+![](https://img.shields.io/github/size/DarkRiDDeR/js-table-cell-selector/dist/tcs.bundle.min.js.svg?colorB=39F&style=flat)
+![](https://img.shields.io/github/license/DarkRiDDeR/js-table-cell-selector.svg?style=flat)
 
 JS library allows you to select cells of HTML tables as well as cleaning, coping, cutting and pasting data of table.
 
@@ -18,6 +20,7 @@ Include the js-files which you can find in the `dist` folder.
 ```html
 <script src="dist/tcs.bundle.min.js"></script>
 ```
+
 ### ES6
 
 ```
@@ -58,81 +61,70 @@ var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, b
 
 ## Methods:
 
-### constructor
-```
-constructor (table [, options])
-```
+The readout of positions is from the upper left corner of the table as [y, x]
 
-### clear
+### constructor (table [, options [, buffer]])
+
+### clear ([c1 [, c2]])
+Clear selected cell
 ```
-clear ([c1 [, c2]])
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
-```
-### copy
-```
-copy ([c1 [, c2]])
-@param c1 - starting position [0, 0]
-@param c2 - end position [1, 1]
-@returns {array[][] | false}
+@returns {boolean}
 ```
 
-### cut
+### copy ([c1 [, c2]])
 ```
-cut ([c1 [, c2]])
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 @returns {array[][] | false}
 ```
 
-### deselect
+### cut ([c1 [, c2]])
 ```
-deselect ()
+@param c1 - starting position [0, 0]
+@param c2 - end position [1, 1]
+@returns {array[][] | false}
+```
+
+### deselect ()
+Remove selection
+```
+@returns {number}
 ```
     
-### destroy
+### destroySizeMatrix ()
+destroy size matrix for big table or changing tables. After which you need to perform initialization with initSizeMatrix()
+
+### getCoords ()
+Get selection coordinates
 ```
-destroy ()
+@returns {array[][] | false}
 ```
 
-### destroySizeMatrix
-destroy size matrix for big table or changing tables
-```
-destroySizeMatrix ()
-```
+### initSizeMatrix ()
 
-### getCoords
+### paste (data [, c1 [, c2]])
 ```
-getCoords ()
-```
-
-### initSizeMatrix
-```
-initSizeMatrix ()
-```
-
-### paste
-```
-paste (data [, c1 [, c2]])
 @param data - array[][]
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
-@returns {boolean}
 ```
 
-### select
+### select (c1 [, c2])
 ```
-select (c1 [, c2])
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 @returns {boolean}
 ```
     
+### selectAll()
+Select all cells
+```
+@returns {number}
+```
 
-### selectAll
-```
-selectAll()
-```
+### destroy ()
 
 ## License
 

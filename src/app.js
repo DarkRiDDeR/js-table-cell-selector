@@ -50,6 +50,7 @@ export default class TableCellSelector {
      * clear ([c1 [, c2]])
      * @param c1 - starting position [0, 0]
      * @param c2 - end position [1, 1]
+     * @returns {boolean}
      */
     clear (c1, c2) {
         if (c1 === undefined) {
@@ -57,7 +58,8 @@ export default class TableCellSelector {
             if (coords === false) return false;
             [c1, c2] = coords;
         }
-        return this.obActions.clear(c1, c2);
+        this.obActions.clear(c1, c2);
+        return true;
     }
 
     /**
@@ -100,6 +102,10 @@ export default class TableCellSelector {
         return data;
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     deselect () {
         return this.obSelector.deselectAll();
     }
@@ -111,6 +117,10 @@ export default class TableCellSelector {
         this.obSelector.destroySizeMatrix();
     }
 
+    /**
+     *
+     * @returns {array[] | false}
+     */
     getCoords () {
         return this.obSelector.getSelectedRectangleCoords();
     }
@@ -156,7 +166,6 @@ export default class TableCellSelector {
      * @param data - array[][]
      * @param c1 - starting position [0, 0]
      * @param c2 - end position [1, 1]
-     * @returns {boolean}
      */
     paste (data, c1, c2) {
         if (c1 === undefined) {
@@ -183,6 +192,10 @@ export default class TableCellSelector {
         return this.obSelector.select(c1, c2);
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     selectAll () {
         return this.obSelector.selectAll();
     }
