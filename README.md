@@ -1,6 +1,7 @@
 # JS Table Cell Selector
 
 [![Build Status](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector.svg?branch=master)](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector)
+![](https://img.shields.io/npm/v/js-table-cell-selector.svg?style=flat)
 ![](https://img.shields.io/github/size/DarkRiDDeR/js-table-cell-selector/dist/tcs.bundle.min.js.svg?colorB=39F&style=flat)
 ![](https://img.shields.io/github/license/DarkRiDDeR/js-table-cell-selector.svg?style=flat)
 
@@ -13,7 +14,7 @@ See [demo](http://darkridder.github.io/js-table-cell-selector/example/).
 
 ## Setup
 
-### Classic web with <script> tag
+### Classic web with \<script\> tag
 
 Include the js-files which you can find in the `dist` folder.
 
@@ -22,12 +23,19 @@ Include the js-files which you can find in the `dist` folder.
 ```
 
 ### ES6
+Install module using npm:
 
-```
-import TableCellSelector from "./js-table-cell-selector/src/app";
-```
+```npm install js-table-cell-selector```
 
-## Usage
+or using yarn:
+
+```yarn add js-table-cell-selector```
+
+and import:
+
+```import TableCellSelector from "js-table-cell-selector";```
+
+## Usage example
 
 ```javascript
 var table = document.getElementById("tcs-table");
