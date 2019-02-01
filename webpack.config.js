@@ -43,6 +43,7 @@ module.exports = (env, argv) => ({
         publicPath: argv.mode !== "production" ? "/" : "../dist/",
         filename: "tcs.bundle.min.js"
     },
+    devtool: argv.mode !== "production" ? "eval-cheap-module-source-map" : "source-map",
     plugins: [
         new HtmlWebpackPlugin({
             template: __dirname + "/index.html",

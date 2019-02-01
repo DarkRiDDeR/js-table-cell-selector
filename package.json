@@ -2,7 +2,7 @@
   "name": "js-table-cell-selector",
   "version": "0.1.0",
   "description": "JS library allows you to select cells of HTML tables as well as cleaning, coping, cutting and pasting ",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack -p --mode production",
     "dev": "./node_modules/.bin/webpack-dev-server -p --env=development --mode development",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darkridder/js-table-cell-selector.git"
+    "url": "git+https://github.com/darkridder/js-table-cell-selector"
   },
   "keywords": [],
   "author": {

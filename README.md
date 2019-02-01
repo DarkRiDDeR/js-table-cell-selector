@@ -64,9 +64,9 @@ var tcs = new TableCellSelector(table, options, buffer);
 
 The readout of positions is from the upper left corner of the table as [y, x]
 
-### constructor (table [, options [, buffer]])
+#### constructor (table [, options [, buffer]])
 
-### clear ([c1 [, c2]])
+#### clear ([c1 [, c2]])
 Clear selected cell
 ```
 @param c1 - starting position [0, 0]
@@ -74,58 +74,58 @@ Clear selected cell
 @returns {boolean}
 ```
 
-### copy ([c1 [, c2]])
+#### copy ([c1 [, c2]])
 ```
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 @returns {array[][] | false}
 ```
 
-### cut ([c1 [, c2]])
+#### cut ([c1 [, c2]])
 ```
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 @returns {array[][] | false}
 ```
 
-### deselect ()
+#### deselect ()
 Remove selection
 ```
 @returns {number}
 ```
     
-### destroySizeMatrix ()
+#### destroySizeMatrix ()
 destroy size matrix for big table or changing tables. After which you need to perform initialization with initSizeMatrix()
 
-### getCoords ()
+#### getCoords ()
 Get selection coordinates
 ```
 @returns {array[][] | false}
 ```
 
-### initSizeMatrix ()
+#### initSizeMatrix ()
 
-### paste (data [, c1 [, c2]])
+#### paste (data [, c1 [, c2]])
 ```
 @param data - array[][]
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 ```
 
-### select (c1 [, c2])
+#### select (c1 [, c2])
 ```
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
 @returns {boolean}
 ```
     
-### selectAll()
+#### selectAll()
 Select all cells
 ```
 @returns {number}
 ```
 
-### destroy ()
+#### destroy ()
 
 ## License
 
