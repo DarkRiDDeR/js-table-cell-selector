@@ -10,7 +10,7 @@ require("./lib/sheetclip.js");
 
 export let _gOptions = {
     deselectOutTableClick: true,
-    enablePasting: true,
+    enableChanging: false,
     getCellFn: function (cell, coord) {
         return cell.innerText;
     },
@@ -144,6 +144,7 @@ export default class TableCellSelector {
                 this.copy();
                 break;
             case 86: // v
+                if (!_gOptions.enableChanging) break;
                 if (this.obBuffer instanceof _Buffer) {
                     this.obBuffer.paste((str) => {
                         this.paste(window.SheetClip.parse(str));
@@ -151,10 +152,12 @@ export default class TableCellSelector {
                 }
                 break;
             case 88: // x
+                if (!_gOptions.enableChanging) break;
                 this.cut();
                 break;
             case 46: // delete
             case 8: // backspase
+                if (!_gOptions.enableChanging) break;
                 this.clear();
                 break;
             }

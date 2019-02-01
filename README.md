@@ -31,9 +31,9 @@ import TableCellSelector from "./js-table-cell-selector/src/app";
 
 ```javascript
 var table = document.getElementById("tcs-table");
-var options = {deselectOutTableClick: false};
+var options = {deselectOutTableClick: false, enableChanging: true};
 var buffer = new TableCellSelector.Buffer();
-var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, buffer);
+var tcs = new TableCellSelector(table, options, buffer);
 ```
 
 ## Keyboard shortcuts
@@ -48,16 +48,17 @@ var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, b
 
 ## Options
 
-| Name                    | Type             | Default                                                 | Description    |
-|-------------------------|------------------|---------------------------------------------------------|----------------|
-| deselectOutTableClick   | Bool             | true                                                    |                |
-| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                |
-| ignoreClass             | String           | 'tcs-ignore'                                            |                |
-| mergePastingGlue        | String           | ' '                                                     |                |
-| selectableTableClass    | String           | 'tcs'                                                   |                |
-| selectIgnoreClass       | Bool             | true                                                    |                |
-| selectClass             | String           | 'tcs-select'                                            |                |
-| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } |                |
+| Name                    | Type             | Default                                                 | Description                                               |
+|-------------------------|------------------|---------------------------------------------------------|-----------------------------------------------------------|
+| deselectOutTableClick   | Bool             | true                                                    |                                                           |
+| enableChanging          | Bool             | false                                                   | The flag allows changing the table using key combinations |
+| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                                                           |
+| ignoreClass             | String           | 'tcs-ignore'                                            |                                                           |
+| mergePastingGlue        | String           | ' '                                                     |                                                           |
+| selectableTableClass    | String           | 'tcs'                                                   |                                                           |
+| selectIgnoreClass       | Bool             | true                                                    |                                                           |
+| selectClass             | String           | 'tcs-select'                                            |                                                           |
+| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } |                                                           |
 
 ## Methods:
 

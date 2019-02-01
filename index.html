@@ -135,6 +135,7 @@
 <div class="interface">
     <form>
         <input type="checkbox" name="deselectOutTableClick" value="1"> deselectOutTableClick<br>
+        <input type="checkbox" name="enableChanging" value="1" checked> enableChanging<br>
         <input type="checkbox" name="selectIgnoreClass" value="1" checked> selectIgnoreClass
         <br><br>
 
@@ -163,7 +164,7 @@
     document.addEventListener("DOMContentLoaded", function(e) {
         console.log('example');
         var table = document.getElementById("tcs-table");
-        var options = {deselectOutTableClick: false};
+        var options = {deselectOutTableClick: false, enableChanging: true};
         var buffer = new TableCellSelector.Buffer();
         var tcs = new TableCellSelector(document.getElementById("tcs-table"), options, buffer);
 
@@ -184,6 +185,11 @@
         document.getElementsByName("deselectOutTableClick")[0].onclick = function (e) {
             tcs.destroy();
             options["deselectOutTableClick"] = this.checked;
+            tcs = new TableCellSelector(table, options);
+        };
+        document.getElementsByName("enableChanging")[0].onclick = function (e) {
+            tcs.destroy();
+            options["enableChanging"] = this.checked;
             tcs = new TableCellSelector(table, options);
         };
         document.getElementsByName("selectIgnoreClass")[0].onclick = function (e) {
