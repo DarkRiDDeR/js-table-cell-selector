@@ -14,6 +14,7 @@
     ],
     "plugins": [
         "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-object-assign",
         "@babel/plugin-transform-parameters"
     ]
 }
