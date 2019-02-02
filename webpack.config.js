@@ -1,9 +1,11 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const path = require("path");
+const webpack = require('webpack');
 
-const SRC_DIR = __dirname + "/src";
-const DIST_DIR = __dirname + "/dist";
-const EXAMPLE_DIR = __dirname + "/example";
+const SRC_DIR = path.join(__dirname, "/src");
+const DIST_DIR = path.join(__dirname, "/dist");
+const EXAMPLE_DIR = path.join(__dirname, "/example");
 
 module.exports = (env, argv) => ({
     optimization: {
@@ -16,7 +18,7 @@ module.exports = (env, argv) => ({
         ]
     },
     entry:  [
-        SRC_DIR + "/app.js"
+        path.join(SRC_DIR, "/app.js")
     ],
     module: {
         rules: [
@@ -39,15 +41,17 @@ module.exports = (env, argv) => ({
         ]
     },
     output: {
+        filename: "tcs.bundle.min.js",
+        libraryTarget: "umd",
         path: DIST_DIR,
         publicPath: argv.mode !== "production" ? "/" : "../dist/",
-        filename: "tcs.bundle.min.js"
+        umdNamedDefine: true
     },
     devtool: argv.mode !== "production" ? "eval-cheap-module-source-map" : "source-map",
     plugins: [
         new HtmlWebpackPlugin({
-            template: __dirname + "/index.html",
-            filename: (argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR) + "/index.html",
+            template: path.join(__dirname, "/index.html"),
+            filename: path.join((argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR), "/index.html"),
             inject: "head",
         })
     ],
