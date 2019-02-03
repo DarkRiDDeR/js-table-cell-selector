@@ -96,7 +96,7 @@ export default class Table {
 
     onOutTableClick(e) {
         this.isMouseDown = false;
-        if (_gOptions.deselectOutTableClick && !getParentTags(e.target, "table")) {
+        if (_gOptions.deselectOutTableClick && !this.isMouse) {
             this.obSelector.deselectAll();
         }
     }
