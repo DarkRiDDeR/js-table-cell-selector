@@ -9,6 +9,7 @@ import {off, on} from "./dom";
 import {SheetClip} from "./lib/sheetclip";
 
 export let _gOptions = {
+    changeTracking: false,
     deselectOutTableClick: true,
     enableChanging: false,
     getCellFn: function (cell, coord) {

@@ -6,6 +6,7 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obApp;
     obSelector;
+    observer;
     table; // html table
     _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);
@@ -22,6 +23,7 @@ export default class Table {
             this.obSelector = obSelector;
             addClass(this.table, _gOptions.selectableTableClass);
             this.addEvents();
+            if (_gOptions.changeTracking) this.initObserver();
         } else {
             throw new Error("Мodule must be initialized to Table");
         }
@@ -36,9 +38,21 @@ export default class Table {
         on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
 
-    destroy() {
-        removeClass(this.table, _gOptions.selectableTableClass);
-        this.removeEvents();
+    /**
+     * Tracking changes in the structure of the table (delete or add rows of columns) for re-initializing of size matrix
+     */
+    initObserver() {
+        const _Observer = MutationObserver || window.WebKitMutationObserver;
+        if (!_Observer) return false;
+        this.observer = new _Observer((mutations) => {
+            mutations.forEach((e) => {
+                if (["TABLE", "THEAD", "TBODY", "TFOOT", "TR"].indexOf(e.target.tagName) > -1) {
+                    this.obSelector.initSizeMatrix();
+                }
+            });
+        });
+        this.observer.observe(this.table, { childList: true, subtree: true });
+        return true;
     }
 
     get isMouse () {
@@ -108,5 +122,11 @@ export default class Table {
         off(this.table, "mouseleave", this._onMouseLeave);
         off(this.table, "mouseup", this._onMouseUp);
         off(this.table.ownerDocument, "click", this._onOutTableClick);
+    }
+
+    destroy() {
+        if (this.observer) this.observer.disconnect();
+        removeClass(this.table, _gOptions.selectableTableClass);
+        this.removeEvents();
     }
 }

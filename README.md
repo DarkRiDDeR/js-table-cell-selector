@@ -56,17 +56,18 @@ var tcs = new TableCellSelector(table, options, buffer);
 
 ## Options
 
-| Name                    | Type             | Default                                                 | Description                                               |
-|-------------------------|------------------|---------------------------------------------------------|-----------------------------------------------------------|
-| deselectOutTableClick   | Bool             | true                                                    |                                                           |
-| enableChanging          | Bool             | false                                                   | The flag allows changing the table using key combinations |
-| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                                                           |
-| ignoreClass             | String           | 'tcs-ignore'                                            |                                                           |
-| mergePastingGlue        | String           | ' '                                                     |                                                           |
-| selectableTableClass    | String           | 'tcs'                                                   |                                                           |
-| selectIgnoreClass       | Bool             | true                                                    |                                                           |
-| selectClass             | String           | 'tcs-select'                                            |                                                           |
-| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } |                                                           |
+| Name                    | Type             | Default                                                 | Description                                                                                                                |
+|-------------------------|------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| changeTracking          | Bool             | false                                                   | Tracking changes in the structure (delete or add rows/columns) for re-initializing of size matrix using MutationObserver   |
+| deselectOutTableClick   | Bool             | true                                                    |                                                                                                                            |
+| enableChanging          | Bool             | false                                                   | The flag allows changing the table using key combinations                                                                  |
+| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                                                                                                                            |
+| ignoreClass             | String           | 'tcs-ignore'                                            |                                                                                                                            |
+| mergePastingGlue        | String           | ' '                                                     |                                                                                                                            |
+| selectableTableClass    | String           | 'tcs'                                                   |                                                                                                                            |
+| selectIgnoreClass       | Bool             | true                                                    |                                                                                                                            |
+| selectClass             | String           | 'tcs-select'                                            |                                                                                                                            |
+| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } |                                                                                                                            |
 
 ## Methods:
 
