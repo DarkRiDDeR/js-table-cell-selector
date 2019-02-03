@@ -111,13 +111,6 @@ export default class TableCellSelector {
     }
 
     /**
-     * destroy size matrix for big table or changing tables
-     */
-    destroySizeMatrix () {
-        this.obSelector.destroySizeMatrix();
-    }
-
-    /**
      *
      * @returns {array[] | false}
      */
@@ -125,6 +118,9 @@ export default class TableCellSelector {
         return this.obSelector.getSelectedRectangleCoords();
     }
 
+    /**
+     * initialize or re-initialize the size matrix
+     */
     initSizeMatrix () {
         this.obSelector.initSizeMatrix();
     }

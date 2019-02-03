@@ -102,9 +102,6 @@ Remove selection
 @returns {number}
 ```
     
-#### destroySizeMatrix ()
-destroy size matrix for big table or changing tables. After which you need to perform initialization with initSizeMatrix()
-
 #### getCoords ()
 Get selection coordinates
 ```
@@ -112,6 +109,7 @@ Get selection coordinates
 ```
 
 #### initSizeMatrix ()
+initialize or re-initialize the size matrix
 
 #### paste (data [, c1 [, c2]])
 ```

@@ -30,12 +30,6 @@ export default class Selector {
         return length;
     }
 
-    destroySizeMatrix() {
-        this._countCols = undefined;
-        this._countRows = undefined;
-        this.matrix = undefined;
-    }
-
     /**
      *
      * @param c - coordinate cell. Example [0, 0]
