@@ -6,7 +6,7 @@ import {isEmpty} from "./funcs";
 import Selector from "./selector";
 import Table from "./table";
 import {off, on} from "./dom";
-require("./lib/sheetclip.js");
+import {SheetClip} from "./lib/sheetclip";
 
 export let _gOptions = {
     deselectOutTableClick: true,
@@ -76,7 +76,7 @@ export default class TableCellSelector {
         }
         const data = this.obActions.copy(c1, c2);
         if (this.obBuffer instanceof _Buffer &&  data !== false) {
-            let str = window.SheetClip.stringify(data);
+            let str = SheetClip.stringify(data);
             this.obBuffer.copy(str);
         }
         return data;
@@ -96,7 +96,7 @@ export default class TableCellSelector {
         }
         const data = this.obActions.cut(c1, c2);
         if (this.obBuffer instanceof _Buffer && data !== false) {
-            let str = window.SheetClip.stringify(data);
+            let str = SheetClip.stringify(data);
             this.obBuffer.copy(str);
         }
         return data;
@@ -147,7 +147,7 @@ export default class TableCellSelector {
                 if (!_gOptions.enableChanging) break;
                 if (this.obBuffer instanceof _Buffer) {
                     this.obBuffer.paste((str) => {
-                        this.paste(window.SheetClip.parse(str));
+                        this.paste(SheetClip.parse(str));
                     });
                 }
                 break;
