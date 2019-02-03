@@ -218,6 +218,4 @@ export default class TableCellSelector {
     }
 }
 
-if (typeof window === "object") {
-    window.TableCellSelector = TableCellSelector;
-}
+global.TableCellSelector = TableCellSelector;
