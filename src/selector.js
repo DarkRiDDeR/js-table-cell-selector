@@ -211,6 +211,14 @@ export default class Selector {
         for (let row of rows) {
             let ix = 0;
             let cells = getElementsByTagNames("td, th", row);
+            const crestFn = () => {
+                while (ix < this.countCols && rowCrest[ix]) {
+                    rowCrest[ix]--;
+                    this.matrix[iy][ix][0] = this.matrix[iy-1][ix][0] || 0 - 1;
+                    this.matrix[iy][ix][1] = this.matrix[iy-1][ix][1];
+                    ix++;
+                }
+            };
 
             for (let itd = 0; itd < cells.length; itd++) {
                 const cell = cells[itd];
@@ -219,12 +227,7 @@ export default class Selector {
                 if (rowspan > 1) this.matrix[iy][ix][0] = 0;
                 if (colspan > 1) this.matrix[iy][ix][1] = 0;
 
-                while (ix < this.countCols && rowCrest[ix]) {
-                    rowCrest[ix]--;
-                    this.matrix[iy][ix][0] = this.matrix[iy-1][ix][0] || 0 - 1;
-                    this.matrix[iy][ix][1] = this.matrix[iy-1][ix][1];
-                    ix++;
-                }
+                crestFn();
 
                 if (colspan > 1) {
                     this.matrix[iy][ix][2] = itd;
@@ -239,6 +242,8 @@ export default class Selector {
                     ix++;
                 }
             }
+
+            crestFn();
             iy++;
         }
     }
