@@ -12,14 +12,16 @@ module.exports = (env, argv) => ({
         minimizer: [
             new UglifyJsPlugin({
                 cache: true,
+                include: /\.min\.js$/,
                 parallel: true,
                 sourceMap: true
             })
         ]
     },
-    entry:  [
-        path.join(SRC_DIR, "/app.js")
-    ],
+    entry: {
+        "tcs.bundle": path.join(SRC_DIR, "app.js"),
+        "tcs.bundle.min": path.join(SRC_DIR, "app.js")
+    },
     module: {
         rules: [
             {
@@ -41,7 +43,7 @@ module.exports = (env, argv) => ({
         ]
     },
     output: {
-        filename: "tcs.bundle.min.js",
+        filename: "[name].js",
         libraryTarget: "umd",
         path: DIST_DIR,
         publicPath: argv.mode !== "production" ? "/" : "../dist/",
@@ -50,8 +52,9 @@ module.exports = (env, argv) => ({
     devtool: argv.mode !== "production" ? "eval-cheap-module-source-map" : "source-map",
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, "/index.html"),
-            filename: path.join((argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR), "/index.html"),
+            chunks: [ "tcs.bundle" ],
+            template: path.join(__dirname, "index.html"),
+            filename: path.join((argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR), "index.html"),
             inject: "head",
         })
     ],
