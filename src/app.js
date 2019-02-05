@@ -18,6 +18,7 @@ export let _gOptions = {
     ignoreClass: 'tcs-ignore',
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
+    mouseBlockSelection: true,
     selectableTableClass : 'tcs',// class added to table
     selectIgnoreClass: true,
     selectClass: 'tcs-select',

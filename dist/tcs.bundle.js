@@ -239,6 +239,7 @@ var _gOptions = {
   ignoreClass: 'tcs-ignore',
   //TODO: mergePasting: true,
   mergePastingGlue: ' ',
+  mouseBlockSelection: true,
   selectableTableClass: 'tcs',
   // class added to table
   selectIgnoreClass: true,
@@ -1588,7 +1589,7 @@ function () {
   }, {
     key: "onMouseDown",
     value: function onMouseDown(e) {
-      e.preventDefault();
+      if (_app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].mouseBlockSelection) e.preventDefault();
       if (this.isRightMouseBtn(e)) return true;
       var cell = Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getParentTags */ "b"])(e.target, "td,th");
       if (cell === null) return; // not for cell

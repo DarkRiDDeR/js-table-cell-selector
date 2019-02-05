@@ -72,7 +72,7 @@ export default class Table {
     }
 
     onMouseDown(e) {
-        e.preventDefault();
+        if (_gOptions.mouseBlockSelection) e.preventDefault();
         if (this.isRightMouseBtn(e)) return true;
 
         let cell = getParentTags(e.target, "td,th");
