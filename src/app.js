@@ -9,7 +9,6 @@ import {off, on} from "./dom";
 import {SheetClip} from "./lib/sheetclip";
 
 export let _gOptions = {
-    changeTracking: false,
     deselectOutTableClick: true,
     enableChanging: false,
     getCellFn: function (cell, coord) {
@@ -19,12 +18,12 @@ export let _gOptions = {
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
-    selectableTableClass : 'tcs',// class added to table
     selectIgnoreClass: true,
     selectClass: 'tcs-select',
     setCellFn: function (cell, data, coord) {
         cell.innerText = data;
-    }
+    },
+    tableClass: 'tcs',// class added to table
     //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
 };
 
