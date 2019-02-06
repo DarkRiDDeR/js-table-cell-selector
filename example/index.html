@@ -239,13 +239,13 @@
         document.getElementById("paste").onclick = function (e) {
             e.preventDefault();
             console.log("paste");
-            tcs.paste(
+            console.log(tcs.paste(
                 [
                     ["a", "b", "c"],
                     ["d", "e", "f"],
                     ["g", "h", "i"]
                 ]
-            );
+            ));
         };
 
         document.getElementById("init").onclick = function (e) {

@@ -58,16 +58,19 @@ var tcs = new TableCellSelector(table, options, buffer);
 
 | Name                    | Type             | Default                                                 | Description                                                                                                                |
 |-------------------------|------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| deselectOutTableClick   | Bool             | true                                                    |                                                                                                                            |
+| deselectOutTableClick   | Bool             | true                                                    | Deselect when clicking is outside the table                                                                                |
 | enableChanging          | Bool             | false                                                   | The flag allows changing the table using key combinations                                                                  |
-| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       |                                                                                                                            |
-| ignoreClass             | String           | 'tcs-ignore'                                            |                                                                                                                            |
-| mergePastingGlue        | String           | ' '                                                     |                                                                                                                            |
+| getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       | Getting cell value                                                                                                         |
+| ignoreClass             | String           | 'tcs-ignore'                                            | You can add this class to a TR or TD                                                                                       |
+| ignoreTfoot             | Bool             | false                                                   | Ignore tag TFOOT and its contents                                                                                          |
+| ignoreThead             | Bool             | false                                                   | Ignore tag THEAD and its contents                                                                                          |
+| initHotkeys             | Bool             | true                                                    | Initialize hotkeys                                                                                                         |
+| mergePastingGlue        | String           | ' '                                                     | The gluing string when pasted into merged cells                                                                            |
 | mouseBlockSelection     | Bool             | true                                                    | Must be disabled when editing cell contents when contenteditable is true for selection to work                             |
-| selectClass             | String           | 'tcs-select'                                            |                                                                                                                            |
-| selectIgnoreClass       | Bool             | true                                                    |                                                                                                                            |
-| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } |                                                                                                                            |
-| tableClass              | String           | 'tcs'                                                   |                                                                                                                            |
+| selectClass             | String           | 'tcs-select'                                            | Class added to the cell when selecting                                                                                     |
+| selectIgnoreClass       | Bool             | true                                                    | Select ignored cells. The actions of changing them will not work anyway                                                    |
+| setCellFn               | Function         | function (cell, data, coord) { cell.innerText = data; } | Setting cell value                                                                                                         |
+| tableClass              | String           | 'tcs'                                                   | Class added to the table when initializing                                                                                 |
 
 ## Methods:
 
@@ -84,6 +87,7 @@ Clear selected cell
 ```
 
 #### copy ([c1 [, c2]])
+Copy with browser buffer support
 ```
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]
@@ -91,6 +95,7 @@ Clear selected cell
 ```
 
 #### cut ([c1 [, c2]])
+Cut with browser buffer support
 ```
 @param c1 - starting position [0, 0]
 @param c2 - end position [1, 1]

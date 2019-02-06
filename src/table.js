@@ -6,7 +6,6 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obApp;
     obSelector;
-    observer;
     table; // html table
     _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);

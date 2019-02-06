@@ -7,17 +7,16 @@ export default class Actions {
 
     constructor (obSelector) {
         this.obSelector = obSelector;
-        this.table = this.obSelector.getTable();
+        this.table = this.obSelector.table;
     }
 
     /**
-     * Function: copy (c1 [, c2])
+     * Function: copy (c1, c2)
      * @param c1
      * @param c2
      * @returns {array[][]}
      */
     copy (c1, c2) {
-        if (c2 === undefined) c2 = c1;
         let ar = Array(c2[0] - c1[0] + 1 ).fill().map(
             () => Array(c2[1] - c1[1] + 1 )
         );
@@ -29,12 +28,11 @@ export default class Actions {
     }
 
     /**
-     * Function: clear (c1 [, c2])
+     * Function: clear (c1, c2)
      * @param c1
      * @param c2
      */
     clear (c1, c2) {
-        if (c2 === undefined) c2 = c1;
         this.iterateCells(c1, c2, (iy, ix, cell) => {
             if (!this.obSelector.isIgnoredCell(cell)) {
                 _gOptions.setCellFn(cell, "", [iy, ix]);
@@ -43,13 +41,12 @@ export default class Actions {
     }
 
     /**
-     * Function: cut (c1 [, c2])
+     * Function: cut (c1, c2)
      * @param c1
      * @param c2
      * @returns {array[][]}
      */
     cut (c1, c2) {
-        if (c2 === undefined) c2 = c1;
         let ar = Array(c2[0] - c1[0] + 1 ).fill().map(
             () => Array(c2[1] - c1[1] + 1 )
         );
@@ -90,12 +87,12 @@ export default class Actions {
 
         let maxY = c1[0] + data.length;
         if (maxY > countR) maxY = countR;
-        if (maxY > c2[0]) maxY = c2[0]+1;
+        if (c2 !== undefined && maxY > c2[0]) maxY = c2[0]+1;
 
         for (let iy = c1[0]; iy < maxY; iy++) {
             let maxX = c1[1] + data[iy-c1[0]].length;
             if (maxX > countC) maxX = countC;
-            if (maxX > c2[1]) maxX = c2[1]+1;
+            if (c2 !== undefined && maxX > c2[1]) maxX = c2[1]+1;
 
             let cellFn;
             for (let ix = c1[1]; ix < maxX; ix++) {
@@ -104,6 +101,7 @@ export default class Actions {
                 if (matrix[iy][ix][1] < 0 || matrix[iy][ix][0] < 0) {
                     if (matrix[iy][ix][0] < 0) y += matrix[iy][ix][0];
                     if (matrix[iy][ix][1] < 0) x += matrix[iy][ix][1];
+                    if (y < c1[0] || x < c1[1]) continue;
                     cellFn = this.mergeWithCell;
                 } else {
                     cellFn = _gOptions.setCellFn;

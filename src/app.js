@@ -15,6 +15,9 @@ export let _gOptions = {
         return cell.innerText;
     },
     ignoreClass: 'tcs-ignore',
+    ignoreTfoot: false,
+    ignoreThead: false,
+    initHotkeys: true,
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
@@ -40,7 +43,7 @@ export default class TableCellSelector {
         this.obTable = new Table(table, this.obSelector, this);
         this.obActions = new Actions(this.obSelector);
         this.obBuffer = buffer;
-        on(document.body, "keydown", this._onKeyDown);
+        if (_gOptions.initHotkeys) on(document.body, "keydown", this._onKeyDown);
     }
 
     static get Buffer () {
@@ -59,6 +62,10 @@ export default class TableCellSelector {
             if (coords === false) return false;
             [c1, c2] = coords;
         }
+
+        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
+        else c2 = c1 = this.normalizeCoords(c1);
+
         this.obActions.clear(c1, c2);
         return true;
     }
@@ -75,6 +82,10 @@ export default class TableCellSelector {
             if (coords === false) return false;
             [c1, c2] = coords;
         }
+
+        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
+        else c2 = c1 = this.normalizeCoords(c1);
+
         const data = this.obActions.copy(c1, c2);
         if (this.obBuffer instanceof _Buffer &&  data !== false) {
             let str = SheetClip.stringify(data);
@@ -95,6 +106,10 @@ export default class TableCellSelector {
             if (isEmpty(coords)) return false;
             [c1, c2] = coords;
         }
+
+        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
+        else c2 = c1 = this.normalizeCoords(c1);
+
         const data = this.obActions.cut(c1, c2);
         if (this.obBuffer instanceof _Buffer && data !== false) {
             let str = SheetClip.stringify(data);
@@ -124,6 +139,39 @@ export default class TableCellSelector {
      */
     initSizeMatrix () {
         this.obSelector.initSizeMatrix();
+    }
+
+
+    /**
+     * (c1 [, c2])
+     * @param c1
+     * @param c2
+     * @returns {array[][] or array[]}
+     */
+    normalizeCoords (c1, c2) {
+        // normalize
+        c1[0] = parseInt(c1[0]) || 0;
+        c1[1] = parseInt(c1[1]) || 0;
+        if (c2 === undefined) {
+            return c1;
+        } else {
+            c2[0] = parseInt(c2[0]) || 0;
+            c2[1] = parseInt(c2[1]) || 0;
+            let temp;
+            if (c1[0] > c2[0]) {
+                temp = c2[0];
+                c2[0] = c1[0];
+                c1[0] = temp;
+            }
+            if (c1[1] > c2[1]) {
+                temp = c2[1];
+                c2[1] = c1[1];
+                c1[1] = temp;
+            }
+            return [c1, c2];
+        }
+
+        // throw new Error("Invalid coordinate");
     }
 
     onKeyDown (e) {
@@ -170,15 +218,14 @@ export default class TableCellSelector {
     paste (data, c1, c2) {
         if (c1 === undefined) {
             let coords = this.obSelector.getSelectedRectangleCoords();
-            if (isEmpty(coords)) return false;
-            [c1, c2] = coords;
-        } else if (c2 === undefined) {
-            c2 = c1;
-        } else {
-            [c1, c2] = this.obSelector.normalizeCoords(c1, c2);
+            if (coords === false) return false;
+            c1 = this.normalizeCoords(coords[0]);
+        } else if (c2 !== undefined) {
+            [c1, c2] = this.normalizeCoords(c1, c2);
+            [c1, c2] = this.obSelector.getRectangleCoords(c1, c2);
         }
-        [c1, c2] = this.obSelector.getRectangleCoords(c1, c2);
         this.obActions.paste(data, c1, c2);
+        return true;
     }
 
     /**
@@ -189,6 +236,11 @@ export default class TableCellSelector {
      */
     select (c1, c2) {
         this.obSelector.deselectAll();
+        if (c2 !== undefined) {
+            [c1, c2] = this.normalizeCoords(c1, c2);
+        } else {
+            c1 = this.normalizeCoords(c1);
+        }
         return this.obSelector.select(c1, c2);
     }
 
@@ -201,9 +253,8 @@ export default class TableCellSelector {
     }
 
     destroy () {
-        off(document.body, "keydown", this._onKeyDown);
+        if (_gOptions.initHotkeys) off(document.body, "keydown", this._onKeyDown);
         this.deselect();
-        this.obBuffer.destroy();
         this.obTable.destroy();
 
         delete

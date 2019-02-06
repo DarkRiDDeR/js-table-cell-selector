@@ -230,23 +230,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 var _gOptions = {
-  changeTracking: false,
   deselectOutTableClick: true,
   enableChanging: false,
   getCellFn: function getCellFn(cell, coord) {
     return cell.innerText;
   },
   ignoreClass: 'tcs-ignore',
+  ignoreTfoot: false,
+  ignoreThead: false,
+  initHotkeys: true,
   //TODO: mergePasting: true,
   mergePastingGlue: ' ',
   mouseBlockSelection: true,
-  selectableTableClass: 'tcs',
-  // class added to table
   selectIgnoreClass: true,
   selectClass: 'tcs-select',
   setCellFn: function setCellFn(cell, data, coord) {
     cell.innerText = data;
-  } //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
+  },
+  tableClass: 'tcs' // class added to table
+  //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
 
 };
 
@@ -275,7 +277,7 @@ function () {
     this.obTable = new _table__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"](table, this.obSelector, this);
     this.obActions = new _actions__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"](this.obSelector);
     this.obBuffer = buffer;
-    Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
+    if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
   }
 
   _createClass(TableCellSelector, [{
@@ -297,6 +299,15 @@ function () {
         c1 = _coords[0];
         c2 = _coords[1];
       }
+
+      if (c2 !== undefined) {
+        var _this$normalizeCoords = this.normalizeCoords(c1, c2);
+
+        var _this$normalizeCoords2 = _slicedToArray(_this$normalizeCoords, 2);
+
+        c1 = _this$normalizeCoords2[0];
+        c2 = _this$normalizeCoords2[1];
+      } else c2 = c1 = this.normalizeCoords(c1);
 
       this.obActions.clear(c1, c2);
       return true;
@@ -320,6 +331,15 @@ function () {
         c1 = _coords2[0];
         c2 = _coords2[1];
       }
+
+      if (c2 !== undefined) {
+        var _this$normalizeCoords3 = this.normalizeCoords(c1, c2);
+
+        var _this$normalizeCoords4 = _slicedToArray(_this$normalizeCoords3, 2);
+
+        c1 = _this$normalizeCoords4[0];
+        c2 = _this$normalizeCoords4[1];
+      } else c2 = c1 = this.normalizeCoords(c1);
 
       var data = this.obActions.copy(c1, c2);
 
@@ -349,6 +369,15 @@ function () {
         c1 = _coords3[0];
         c2 = _coords3[1];
       }
+
+      if (c2 !== undefined) {
+        var _this$normalizeCoords5 = this.normalizeCoords(c1, c2);
+
+        var _this$normalizeCoords6 = _slicedToArray(_this$normalizeCoords5, 2);
+
+        c1 = _this$normalizeCoords6[0];
+        c2 = _this$normalizeCoords6[1];
+      } else c2 = c1 = this.normalizeCoords(c1);
 
       var data = this.obActions.cut(c1, c2);
 
@@ -387,6 +416,43 @@ function () {
     key: "initSizeMatrix",
     value: function initSizeMatrix() {
       this.obSelector.initSizeMatrix();
+    }
+    /**
+     * (c1 [, c2])
+     * @param c1
+     * @param c2
+     * @returns {array[][] or array[]}
+     */
+
+  }, {
+    key: "normalizeCoords",
+    value: function normalizeCoords(c1, c2) {
+      // normalize
+      c1[0] = parseInt(c1[0]) || 0;
+      c1[1] = parseInt(c1[1]) || 0;
+
+      if (c2 === undefined) {
+        return c1;
+      } else {
+        c2[0] = parseInt(c2[0]) || 0;
+        c2[1] = parseInt(c2[1]) || 0;
+        var temp;
+
+        if (c1[0] > c2[0]) {
+          temp = c2[0];
+          c2[0] = c1[0];
+          c1[0] = temp;
+        }
+
+        if (c1[1] > c2[1]) {
+          temp = c2[1];
+          c2[1] = c1[1];
+          c1[1] = temp;
+        }
+
+        return [c1, c2];
+      } // throw new Error("Invalid coordinate");
+
     }
   }, {
     key: "onKeyDown",
@@ -451,30 +517,26 @@ function () {
     value: function paste(data, c1, c2) {
       if (c1 === undefined) {
         var coords = this.obSelector.getSelectedRectangleCoords();
-        if (Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* isEmpty */ "c"])(coords)) return false;
+        if (coords === false) return false;
+        c1 = this.normalizeCoords(coords[0]);
+      } else if (c2 !== undefined) {
+        var _this$normalizeCoords7 = this.normalizeCoords(c1, c2);
 
-        var _coords4 = _slicedToArray(coords, 2);
+        var _this$normalizeCoords8 = _slicedToArray(_this$normalizeCoords7, 2);
 
-        c1 = _coords4[0];
-        c2 = _coords4[1];
-      } else if (c2 === undefined) {
-        c2 = c1;
-      } else {
-        var _this$obSelector$norm = this.obSelector.normalizeCoords(c1, c2);
+        c1 = _this$normalizeCoords8[0];
+        c2 = _this$normalizeCoords8[1];
 
-        var _this$obSelector$norm2 = _slicedToArray(_this$obSelector$norm, 2);
+        var _this$obSelector$getR = this.obSelector.getRectangleCoords(c1, c2);
 
-        c1 = _this$obSelector$norm2[0];
-        c2 = _this$obSelector$norm2[1];
+        var _this$obSelector$getR2 = _slicedToArray(_this$obSelector$getR, 2);
+
+        c1 = _this$obSelector$getR2[0];
+        c2 = _this$obSelector$getR2[1];
       }
 
-      var _this$obSelector$getR = this.obSelector.getRectangleCoords(c1, c2);
-
-      var _this$obSelector$getR2 = _slicedToArray(_this$obSelector$getR, 2);
-
-      c1 = _this$obSelector$getR2[0];
-      c2 = _this$obSelector$getR2[1];
       this.obActions.paste(data, c1, c2);
+      return true;
     }
     /**
      * select (c1 [, c2])
@@ -487,6 +549,18 @@ function () {
     key: "select",
     value: function select(c1, c2) {
       this.obSelector.deselectAll();
+
+      if (c2 !== undefined) {
+        var _this$normalizeCoords9 = this.normalizeCoords(c1, c2);
+
+        var _this$normalizeCoords10 = _slicedToArray(_this$normalizeCoords9, 2);
+
+        c1 = _this$normalizeCoords10[0];
+        c2 = _this$normalizeCoords10[1];
+      } else {
+        c1 = this.normalizeCoords(c1);
+      }
+
       return this.obSelector.select(c1, c2);
     }
     /**
@@ -502,9 +576,8 @@ function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* off */ "d"])(document.body, "keydown", this._onKeyDown);
+      if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* off */ "d"])(document.body, "keydown", this._onKeyDown);
       this.deselect();
-      this.obBuffer.destroy();
       this.obTable.destroy();
       delete this.obActions, this.obBuffer, this.obSelector, this.obTable, this;
     }
@@ -806,10 +879,10 @@ function () {
     _defineProperty(this, "table", void 0);
 
     this.obSelector = obSelector;
-    this.table = this.obSelector.getTable();
+    this.table = this.obSelector.table;
   }
   /**
-   * Function: copy (c1 [, c2])
+   * Function: copy (c1, c2)
    * @param c1
    * @param c2
    * @returns {array[][]}
@@ -819,7 +892,6 @@ function () {
   _createClass(Actions, [{
     key: "copy",
     value: function copy(c1, c2) {
-      if (c2 === undefined) c2 = c1;
       var ar = Array(c2[0] - c1[0] + 1).fill().map(function () {
         return Array(c2[1] - c1[1] + 1);
       });
@@ -829,7 +901,7 @@ function () {
       return ar;
     }
     /**
-     * Function: clear (c1 [, c2])
+     * Function: clear (c1, c2)
      * @param c1
      * @param c2
      */
@@ -839,7 +911,6 @@ function () {
     value: function clear(c1, c2) {
       var _this = this;
 
-      if (c2 === undefined) c2 = c1;
       this.iterateCells(c1, c2, function (iy, ix, cell) {
         if (!_this.obSelector.isIgnoredCell(cell)) {
           _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].setCellFn(cell, "", [iy, ix]);
@@ -847,7 +918,7 @@ function () {
       });
     }
     /**
-     * Function: cut (c1 [, c2])
+     * Function: cut (c1, c2)
      * @param c1
      * @param c2
      * @returns {array[][]}
@@ -858,7 +929,6 @@ function () {
     value: function cut(c1, c2) {
       var _this2 = this;
 
-      if (c2 === undefined) c2 = c1;
       var ar = Array(c2[0] - c1[0] + 1).fill().map(function () {
         return Array(c2[1] - c1[1] + 1);
       });
@@ -905,12 +975,12 @@ function () {
       var countC = this.obSelector.countCols;
       var maxY = c1[0] + data.length;
       if (maxY > countR) maxY = countR;
-      if (maxY > c2[0]) maxY = c2[0] + 1;
+      if (c2 !== undefined && maxY > c2[0]) maxY = c2[0] + 1;
 
       for (var iy = c1[0]; iy < maxY; iy++) {
         var maxX = c1[1] + data[iy - c1[0]].length;
         if (maxX > countC) maxX = countC;
-        if (maxX > c2[1]) maxX = c2[1] + 1;
+        if (c2 !== undefined && maxX > c2[1]) maxX = c2[1] + 1;
         var cellFn = void 0;
 
         for (var ix = c1[1]; ix < maxX; ix++) {
@@ -920,6 +990,7 @@ function () {
           if (matrix[iy][ix][1] < 0 || matrix[iy][ix][0] < 0) {
             if (matrix[iy][ix][0] < 0) y += matrix[iy][ix][0];
             if (matrix[iy][ix][1] < 0) x += matrix[iy][ix][1];
+            if (y < c1[0] || x < c1[1]) continue;
             cellFn = this.mergeWithCell;
           } else {
             cellFn = _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].setCellFn;
@@ -979,11 +1050,11 @@ function () {
 
     _defineProperty(this, "_countRows", 0);
 
+    _defineProperty(this, "_table", void 0);
+
     _defineProperty(this, "matrix", void 0);
 
-    _defineProperty(this, "table", void 0);
-
-    this.table = table;
+    this._table = table;
     /*if (_gOptions.usingSizeMatrix) */
 
     this.initSizeMatrix();
@@ -1037,36 +1108,26 @@ function () {
   }, {
     key: "getCell",
     value: function getCell(c) {
-      if (Array.isArray(c)) {
-        // normalize
-        c[0] = parseInt(c[0]) || 0;
-        c[1] = parseInt(c[1]) || 0;
-
-        if (c[0] >= 0 && c[1] >= 0) {
-          //if (_gOptions.usingSizeMatrix) {
-          if (c[0] < this.countRows && c[1] < this.countCols) {
-            if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
-            if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
-            var row = this.table.getElementsByTagName("tr")[c[0]];
-            return Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getElementsByTagNames */ "a"])("td,th", row)[this.matrix[c[0]][c[1]][2]];
-          }
-          /*} else {
-              let rows = this.table.getElementsByTagName("tr");
-              for (let iy = 0; iy < rows.length; iy++) {
-                  if (c[0] != iy) continue;
-                  let cols = rows[iy].getElementsByTagName("td");
-                  for (let ix = 0; ix < cols.length; ix++) {
-                      if (c[1] != ix) continue;
-                      return cols[ix];
-                  }
-              }
-          }*/
-
+      if (c[0] >= 0 && c[1] >= 0) {
+        //if (_gOptions.usingSizeMatrix) {
+        if (c[0] < this.countRows && c[1] < this.countCols) {
+          if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
+          if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
+          var row = this.table.getElementsByTagName("tr")[c[0]];
+          return Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getElementsByTagNames */ "a"])("td,th", row)[this.matrix[c[0]][c[1]][2]];
         }
+        /*} else {
+            let rows = this.table.getElementsByTagName("tr");
+            for (let iy = 0; iy < rows.length; iy++) {
+                if (c[0] != iy) continue;
+                let cols = rows[iy].getElementsByTagName("td");
+                for (let ix = 0; ix < cols.length; ix++) {
+                    if (c[1] != ix) continue;
+                    return cols[ix];
+                }
+            }
+        }*/
 
-        return null;
-      } else {
-        throw new Error("Invalid coordinate");
       }
     }
   }, {
@@ -1172,11 +1233,6 @@ function () {
       }
 
       return [c1, c2];
-    }
-  }, {
-    key: "getTable",
-    value: function getTable() {
-      return this.table;
     }
   }, {
     key: "initSizeMatrix",
@@ -1288,38 +1344,15 @@ function () {
   }, {
     key: "isIgnoredCell",
     value: function isIgnoredCell(cell) {
+      var ppn = cell.parentNode.parentNode;
       return Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* hasClass */ "b"])(cell, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].ignoreClass) // td
       || Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* hasClass */ "b"])(cell.parentNode, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].ignoreClass) // tr
-      || Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* hasClass */ "b"])(cell.parentNode.parentNode, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].ignoreClass); // example thead or tfoot
+      || _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].ignoreThead && ppn.tagName === "THEAD" || _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].ignoreTfoot && ppn.tagName === "TFOOT";
     }
   }, {
     key: "isSelectedCell",
     value: function isSelectedCell(cell) {
       return Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* hasClass */ "b"])(cell, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].selectClass);
-    }
-  }, {
-    key: "normalizeCoords",
-    value: function normalizeCoords(c1, c2) {
-      // normalize
-      c1[0] = parseInt(c1[0]) || 0;
-      c1[1] = parseInt(c1[1]) || 0;
-      c2[0] = parseInt(c2[0]) || 0;
-      c2[1] = parseInt(c2[1]) || 0;
-      var temp;
-
-      if (c1[0] > c2[0]) {
-        temp = c2[0];
-        c2[0] = c1[0];
-        c1[0] = temp;
-      }
-
-      if (c1[1] > c2[1]) {
-        temp = c2[1];
-        c2[1] = c1[1];
-        c1[1] = temp;
-      }
-
-      return [c1, c2];
     }
     /**
      * select cells. Fn: select (c1 [, c2])
@@ -1331,69 +1364,58 @@ function () {
   }, {
     key: "select",
     value: function select(c1, c2) {
-      if (Array.isArray(c1) && (Array.isArray(c2) || c2 === undefined)) {
-        if (c2 === undefined || c1[0] == c2[0] && c1[1] == c2[1]) {
-          // normalize
-          var cell = this.getCell(c1);
+      if (c2 === undefined || c1[0] == c2[0] && c1[1] == c2[1]) {
+        // normalize
+        var cell = this.getCell(c1);
 
-          if (!Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* isEmpty */ "c"])(cell)) {
-            return this.selectCell(cell);
-          }
-        } else {
-          var isSelected = false;
+        if (!Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* isEmpty */ "c"])(cell)) {
+          return this.selectCell(cell);
+        }
+      } else {
+        var isSelected = false; //if (_gOptions.usingSizeMatrix) {
 
-          var _this$normalizeCoords = this.normalizeCoords(c1, c2);
+        if (c1[0] >= this.countRows || c1[1] >= this.countCols || c2[0] < 0 || c2[1] < 0) return false;
+        if (c1[0] < 0) c1[0] = 0;
+        if (c1[1] < 0) c1[1] = 0;
+        if (c2[0] >= this.countRows) c2[0] = this.countRows - 1;
+        if (c2[1] >= this.countCols) c2[1] = this.countCols - 1;
 
-          var _this$normalizeCoords2 = _slicedToArray(_this$normalizeCoords, 2);
+        var _this$getRectangleCoo = this.getRectangleCoords(c1, c2);
 
-          c1 = _this$normalizeCoords2[0];
-          c2 = _this$normalizeCoords2[1];
-          //if (_gOptions.usingSizeMatrix) {
-          if (c1[0] >= this.countRows || c1[1] >= this.countCols || c2[0] < 0 || c2[1] < 0) return false;
-          if (c1[0] < 0) c1[0] = 0;
-          if (c1[1] < 0) c1[1] = 0;
-          if (c2[0] >= this.countRows) c2[0] = this.countRows - 1;
-          if (c2[1] >= this.countCols) c2[1] = this.countCols - 1;
+        var _this$getRectangleCoo2 = _slicedToArray(_this$getRectangleCoo, 2);
 
-          var _this$getRectangleCoo = this.getRectangleCoords(c1, c2);
+        c1 = _this$getRectangleCoo2[0];
+        c2 = _this$getRectangleCoo2[1];
+        var rows = this.table.getElementsByTagName("tr");
 
-          var _this$getRectangleCoo2 = _slicedToArray(_this$getRectangleCoo, 2);
+        for (var iy = c1[0]; iy <= c2[0]; iy++) {
+          var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getElementsByTagNames */ "a"])("td, th", rows[iy]);
 
-          c1 = _this$getRectangleCoo2[0];
-          c2 = _this$getRectangleCoo2[1];
-          var rows = this.table.getElementsByTagName("tr");
-
-          for (var iy = c1[0]; iy <= c2[0]; iy++) {
-            var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getElementsByTagNames */ "a"])("td, th", rows[iy]);
-
-            for (var ix = c1[1]; ix <= c2[1]; ix++) {
-              if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                var result = this.selectCell(cells[this.matrix[iy][ix][2]]);
-                if (!isSelected) isSelected = result;
-              }
+          for (var ix = c1[1]; ix <= c2[1]; ix++) {
+            if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+              var result = this.selectCell(cells[this.matrix[iy][ix][2]]);
+              if (!isSelected) isSelected = result;
             }
           }
-          /*} else {
-                let rows = this.table.getElementsByTagName("tr");
-              for (let iy = 0; iy < rows.length; iy++) {
-                  if (iy < c1[0] || iy > c2[0]) continue;
-                  let cols = rows[iy].getElementsByTagName("td");
-                  for (let ix = 0; ix < cols.length; ix++) {
-                      if (ix < c1[1] || ix > c2[1]) continue;
-                      let result = this.selectCell(cols[ix]);
-                      if (!isSelected) isSelected = result;
-                  }
-              }
-          }*/
-
-
-          return isSelected;
         }
+        /*} else {
+              let rows = this.table.getElementsByTagName("tr");
+            for (let iy = 0; iy < rows.length; iy++) {
+                if (iy < c1[0] || iy > c2[0]) continue;
+                let cols = rows[iy].getElementsByTagName("td");
+                for (let ix = 0; ix < cols.length; ix++) {
+                    if (ix < c1[1] || ix > c2[1]) continue;
+                    let result = this.selectCell(cols[ix]);
+                    if (!isSelected) isSelected = result;
+                }
+            }
+        }*/
 
-        return false;
-      } else {
-        throw new Error("Invalid selection positions");
+
+        return isSelected;
       }
+
+      return false;
     }
   }, {
     key: "selectAll",
@@ -1454,6 +1476,11 @@ function () {
     get: function get() {
       return this.matrix;
     }
+  }, {
+    key: "table",
+    get: function get() {
+      return this._table;
+    }
   }]);
 
   return Selector;
@@ -1498,8 +1525,6 @@ function () {
 
     _defineProperty(this, "obSelector", void 0);
 
-    _defineProperty(this, "observer", void 0);
-
     _defineProperty(this, "table", void 0);
 
     _defineProperty(this, "_isMouse", false);
@@ -1533,9 +1558,8 @@ function () {
 
       this.obApp = obApp;
       this.obSelector = obSelector;
-      Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* addClass */ "a"])(this.table, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].selectableTableClass);
+      Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* addClass */ "a"])(this.table, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].tableClass);
       this.addEvents();
-      if (_app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].changeTracking) this.initObserver();
     } else {
       throw new Error("Мodule must be initialized to Table");
     }
@@ -1550,31 +1574,6 @@ function () {
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mouseleave", this._onMouseLeave);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mouseup", this._onMouseUp);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
-    }
-    /**
-     * Tracking changes in the structure of the table (delete or add rows of columns) for re-initializing of size matrix
-     */
-
-  }, {
-    key: "initObserver",
-    value: function initObserver() {
-      var _this2 = this;
-
-      var _Observer = MutationObserver || window.WebKitMutationObserver;
-
-      if (!_Observer) return false;
-      this.observer = new _Observer(function (mutations) {
-        mutations.forEach(function (e) {
-          if (["TABLE", "THEAD", "TBODY", "TFOOT", "TR"].indexOf(e.target.tagName) > -1) {
-            _this2.obSelector.initSizeMatrix();
-          }
-        });
-      });
-      this.observer.observe(this.table, {
-        childList: true,
-        subtree: true
-      });
-      return true;
     }
   }, {
     key: "isRightMouseBtn",
@@ -1647,8 +1646,7 @@ function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      if (this.observer) this.observer.disconnect();
-      Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* removeClass */ "d"])(this.table, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].selectableTableClass);
+      Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* removeClass */ "d"])(this.table, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].tableClass);
       this.removeEvents();
     }
   }, {
