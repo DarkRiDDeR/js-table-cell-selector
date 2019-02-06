@@ -1,0 +1,11 @@
+/example/
+/node_modules/
+/.idea/
+/.git/
+
+/dist/*.min.*
+*.iws
+*.iml
+*.ipr
+*.log
+yarn.lock
