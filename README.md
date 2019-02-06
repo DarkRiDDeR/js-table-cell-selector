@@ -42,6 +42,9 @@ var table = document.getElementById("tcs-table");
 var options = {deselectOutTableClick: false, enableChanging: true};
 var buffer = new TableCellSelector.Buffer();
 var tcs = new TableCellSelector(table, options, buffer);
+tcs.onStartSelect = function (event, cell) {
+    console.log("start select");
+};
 ```
 
 ## Keyboard shortcuts
@@ -138,6 +141,14 @@ Select all cells
 ```
 
 #### destroy ()
+
+## Events:
+
+#### onStartSelect(event, cell)
+Occurs at the starting of a selection
+
+#### onFinishSelect(event)
+Occurs at the finishing of a selection
 
 ## License
 

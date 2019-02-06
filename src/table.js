@@ -6,6 +6,8 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obApp;
     obSelector;
+    onStartSelect;
+    onFinishSelect;
     table; // html table
     _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);
@@ -32,7 +34,7 @@ export default class Table {
         on(this.table, "mousedown", this._onMouseDown);
         on(this.table, "mouseenter", this._onMouseEnter);
         on(this.table, "mouseleave", this._onMouseLeave);
-        on(this.table, "mouseup", this._onMouseUp);
+        on(document.body, "mouseup", this._onMouseUp);
         on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
 
@@ -63,6 +65,7 @@ export default class Table {
 
         this.obSelector.deselectAll();
         this.obSelector.selectCell(cell);
+        this.onStartSelect(e, cell);
     }
 
     onMouseOver(e) {
@@ -86,6 +89,7 @@ export default class Table {
     }
 
     onMouseUp(e) {
+        if (this.isMouseDown) this.onFinishSelect(e);
         this.isMouseDown = false;
     }
 
@@ -101,7 +105,7 @@ export default class Table {
         off(this.table, "mousedown", this._onMouseDown);
         off(this.table, "mouseenter", this._onMouseEnter);
         off(this.table, "mouseleave", this._onMouseLeave);
-        off(this.table, "mouseup", this._onMouseUp);
+        off(document.body, "mouseup", this._onMouseUp);
         off(this.table.ownerDocument, "click", this._onOutTableClick);
     }
 

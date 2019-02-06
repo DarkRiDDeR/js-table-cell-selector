@@ -164,7 +164,17 @@
     document.addEventListener("DOMContentLoaded", function(e) {
         console.log('example');
         var table = document.getElementById("tcs-table");
-        var options = {changeTracking: true, deselectOutTableClick: false, enableChanging: true};
+        var options = {
+            changeTracking: true,
+            deselectOutTableClick: false,
+            enableChanging: true,
+            onStartSelect: function (event, cell) {
+                console.log("start select");
+            },
+            onFinishSelect: function (event) {
+                console.log("finish select");
+            }
+        };
         var buffer = new TableCellSelector.Buffer();
         var tcs = new TableCellSelector(table, options, buffer);
 

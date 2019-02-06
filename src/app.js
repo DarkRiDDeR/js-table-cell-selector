@@ -21,6 +21,8 @@ export let _gOptions = {
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
+    onStartSelect: function (e, cell) { },
+    onFinishSelect: function (e) { },
     selectIgnoreClass: true,
     selectClass: 'tcs-select',
     setCellFn: function (cell, data, coord) {
@@ -41,6 +43,8 @@ export default class TableCellSelector {
         if (typeof options === "object") Object.assign(_gOptions, options);
         this.obSelector = new Selector(table);
         this.obTable = new Table(table, this.obSelector, this);
+        this.obTable.onStartSelect = _gOptions.onStartSelect;
+        this.obTable.onFinishSelect = _gOptions.onFinishSelect;
         this.obActions = new Actions(this.obSelector);
         this.obBuffer = buffer;
         if (_gOptions.initHotkeys) on(document.body, "keydown", this._onKeyDown);
@@ -208,6 +212,14 @@ export default class TableCellSelector {
             }
         }
     }
+
+    set onStartSelect (fn) {
+        this.obTable.onStartSelect = fn;
+    }
+    set onFinishSelect (fn) {
+        this.obTable.onFinishSelect = fn;
+    }
+
 
     /**
      * paste (data [, c1 [, c2]])

@@ -242,6 +242,8 @@ var _gOptions = {
   //TODO: mergePasting: true,
   mergePastingGlue: ' ',
   mouseBlockSelection: true,
+  onStartSelect: function onStartSelect(e, cell) {},
+  onFinishSelect: function onFinishSelect(e) {},
   selectIgnoreClass: true,
   selectClass: 'tcs-select',
   setCellFn: function setCellFn(cell, data, coord) {
@@ -275,6 +277,8 @@ function () {
     if (_typeof(options) === "object") _extends(_gOptions, options);
     this.obSelector = new _selector__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"](table);
     this.obTable = new _table__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"](table, this.obSelector, this);
+    this.obTable.onStartSelect = _gOptions.onStartSelect;
+    this.obTable.onFinishSelect = _gOptions.onFinishSelect;
     this.obActions = new _actions__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"](this.obSelector);
     this.obBuffer = buffer;
     if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
@@ -505,15 +509,15 @@ function () {
         }
       }
     }
+  }, {
+    key: "paste",
+
     /**
      * paste (data [, c1 [, c2]])
      * @param data - array[][]
      * @param c1 - starting position [0, 0]
      * @param c2 - end position [1, 1]
      */
-
-  }, {
-    key: "paste",
     value: function paste(data, c1, c2) {
       if (c1 === undefined) {
         var coords = this.obSelector.getSelectedRectangleCoords();
@@ -580,6 +584,16 @@ function () {
       this.deselect();
       this.obTable.destroy();
       delete this.obActions, this.obBuffer, this.obSelector, this.obTable, this;
+    }
+  }, {
+    key: "onStartSelect",
+    set: function set(fn) {
+      this.obTable.onStartSelect = fn;
+    }
+  }, {
+    key: "onFinishSelect",
+    set: function set(fn) {
+      this.obTable.onFinishSelect = fn;
     }
   }], [{
     key: "Buffer",
@@ -1525,6 +1539,10 @@ function () {
 
     _defineProperty(this, "obSelector", void 0);
 
+    _defineProperty(this, "onStartSelect", void 0);
+
+    _defineProperty(this, "onFinishSelect", void 0);
+
     _defineProperty(this, "table", void 0);
 
     _defineProperty(this, "_isMouse", false);
@@ -1572,7 +1590,7 @@ function () {
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mousedown", this._onMouseDown);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mouseenter", this._onMouseEnter);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mouseleave", this._onMouseLeave);
-      Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table, "mouseup", this._onMouseUp);
+      Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(document.body, "mouseup", this._onMouseUp);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* on */ "e"])(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
   }, {
@@ -1596,6 +1614,7 @@ function () {
       this.isMouseDown = true;
       this.obSelector.deselectAll();
       this.obSelector.selectCell(cell);
+      this.onStartSelect(e, cell);
     }
   }, {
     key: "onMouseOver",
@@ -1622,6 +1641,7 @@ function () {
   }, {
     key: "onMouseUp",
     value: function onMouseUp(e) {
+      if (this.isMouseDown) this.onFinishSelect(e);
       this.isMouseDown = false;
     }
   }, {
@@ -1640,7 +1660,7 @@ function () {
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mousedown", this._onMouseDown);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseenter", this._onMouseEnter);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseleave", this._onMouseLeave);
-      Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseup", this._onMouseUp);
+      Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(document.body, "mouseup", this._onMouseUp);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table.ownerDocument, "click", this._onOutTableClick);
     }
   }, {
