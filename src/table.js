@@ -7,6 +7,7 @@ export default class Table {
     obApp;
     obSelector;
     onStartSelect;
+    onSelect;
     onFinishSelect;
     table; // html table
     _isMouse = false;
@@ -74,7 +75,8 @@ export default class Table {
         let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
-        this.obSelector.selectCell(cell);
+        !this.obSelector.isSelectedCell(cell) && this.obSelector.selectCell(cell) && this.onSelect(e, cell);
+
         //magic selection
         let coords = this.obSelector.getSelectedRectangleCoords();
         if (coords !== false) this.obSelector.select(coords[0], coords[1]);

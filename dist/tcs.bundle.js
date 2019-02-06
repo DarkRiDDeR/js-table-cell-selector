@@ -242,6 +242,7 @@ var _gOptions = {
   //TODO: mergePasting: true,
   mergePastingGlue: ' ',
   mouseBlockSelection: true,
+  onSelect: function onSelect(e, cell) {},
   onStartSelect: function onStartSelect(e, cell) {},
   onFinishSelect: function onFinishSelect(e) {},
   selectIgnoreClass: true,
@@ -279,6 +280,7 @@ function () {
     this.obTable = new _table__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"](table, this.obSelector, this);
     this.obTable.onStartSelect = _gOptions.onStartSelect;
     this.obTable.onFinishSelect = _gOptions.onFinishSelect;
+    this.obTable.onSelect = _gOptions.onSelect;
     this.obActions = new _actions__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"](this.obSelector);
     this.obBuffer = buffer;
     if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_5__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
@@ -589,6 +591,11 @@ function () {
     key: "onStartSelect",
     set: function set(fn) {
       this.obTable.onStartSelect = fn;
+    }
+  }, {
+    key: "onSelect",
+    set: function set(fn) {
+      this.obTable.onSelect = fn;
     }
   }, {
     key: "onFinishSelect",
@@ -1541,6 +1548,8 @@ function () {
 
     _defineProperty(this, "onStartSelect", void 0);
 
+    _defineProperty(this, "onSelect", void 0);
+
     _defineProperty(this, "onFinishSelect", void 0);
 
     _defineProperty(this, "table", void 0);
@@ -1623,7 +1632,7 @@ function () {
       var cell = Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* getParentTags */ "b"])(e.target, "td,th");
       if (cell === null) return; // not for cell
 
-      this.obSelector.selectCell(cell); //magic selection
+      !this.obSelector.isSelectedCell(cell) && this.obSelector.selectCell(cell) && this.onSelect(e, cell); //magic selection
 
       var coords = this.obSelector.getSelectedRectangleCoords();
       if (coords !== false) this.obSelector.select(coords[0], coords[1]);

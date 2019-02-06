@@ -21,6 +21,7 @@ export let _gOptions = {
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
+    onSelect: function (e, cell) { },
     onStartSelect: function (e, cell) { },
     onFinishSelect: function (e) { },
     selectIgnoreClass: true,
@@ -45,6 +46,7 @@ export default class TableCellSelector {
         this.obTable = new Table(table, this.obSelector, this);
         this.obTable.onStartSelect = _gOptions.onStartSelect;
         this.obTable.onFinishSelect = _gOptions.onFinishSelect;
+        this.obTable.onSelect = _gOptions.onSelect;
         this.obActions = new Actions(this.obSelector);
         this.obBuffer = buffer;
         if (_gOptions.initHotkeys) on(document.body, "keydown", this._onKeyDown);
@@ -215,6 +217,9 @@ export default class TableCellSelector {
 
     set onStartSelect (fn) {
         this.obTable.onStartSelect = fn;
+    }
+    set onSelect (fn) {
+        this.obTable.onSelect = fn;
     }
     set onFinishSelect (fn) {
         this.obTable.onFinishSelect = fn;
