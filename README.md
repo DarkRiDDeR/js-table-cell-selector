@@ -147,7 +147,7 @@ Select all cells
 #### onStartSelect(event, cell)
 Occurs at the starting of a selection
 
-#### onStart(event, cell)
+#### onSelect(event, cell)
 Occurs when a new cell is selected, starting from the second cell. The first is triggered onStartSelect
 
 #### onFinishSelect(event)
