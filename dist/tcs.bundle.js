@@ -251,13 +251,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _gOptions = {
   deselectOutTableClick: true,
   enableChanging: false,
+  enableHotkeys: true,
   getCellFn: function getCellFn(cell, coord) {
     return cell.innerText;
   },
   ignoreClass: 'tcs-ignore',
   ignoreTfoot: false,
   ignoreThead: false,
-  initHotkeys: true,
   //TODO: mergePasting: true,
   mergePastingGlue: ' ',
   mouseBlockSelection: true,
@@ -282,6 +282,10 @@ function () {
 
     _classCallCheck(this, TableCellSelector);
 
+    _defineProperty(this, "enableChanging", void 0);
+
+    _defineProperty(this, "enableHotkeys", void 0);
+
     _defineProperty(this, "obActions", void 0);
 
     _defineProperty(this, "obBuffer", void 0);
@@ -295,6 +299,8 @@ function () {
     });
 
     if (_typeof(options) === "object") _extends(_gOptions, options);
+    this.enableChanging = _gOptions.enableChanging;
+    this.enableHotkeys = _gOptions.enableHotkeys;
     this.obSelector = new _selector__WEBPACK_IMPORTED_MODULE_7__[/* default */ "a"](table);
     this.obTable = new _table__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"](table, this.obSelector, this);
     this.obTable.onStartSelect = _gOptions.onStartSelect;
@@ -302,7 +308,7 @@ function () {
     this.obTable.onSelect = _gOptions.onSelect;
     this.obActions = new _actions__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"](this.obSelector);
     this.obBuffer = buffer;
-    if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_9__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
+    Object(_dom__WEBPACK_IMPORTED_MODULE_9__[/* on */ "e"])(document.body, "keydown", this._onKeyDown);
   }
 
   _createClass(TableCellSelector, [{
@@ -484,6 +490,7 @@ function () {
     value: function onKeyDown(e) {
       var _this2 = this;
 
+      if (!this.enableHotkeys) return;
       e = e || window.event;
       var key = e.which || e.keyCode; // keyCode detection
 
@@ -504,7 +511,7 @@ function () {
 
           case 86:
             // v
-            if (!_gOptions.enableChanging) break;
+            if (!this.enableChanging) break;
 
             if (this.obBuffer instanceof _buffer__WEBPACK_IMPORTED_MODULE_5__[/* default */ "a"]) {
               this.obBuffer.paste(function (str) {
@@ -516,7 +523,7 @@ function () {
 
           case 88:
             // x
-            if (!_gOptions.enableChanging) break;
+            if (!this.enableChanging) break;
             this.cut();
             break;
 
@@ -524,7 +531,7 @@ function () {
 
           case 8:
             // backspase
-            if (!_gOptions.enableChanging) break;
+            if (!this.enableChanging) break;
             this.clear();
             break;
         }
@@ -601,7 +608,7 @@ function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      if (_gOptions.initHotkeys) Object(_dom__WEBPACK_IMPORTED_MODULE_9__[/* off */ "d"])(document.body, "keydown", this._onKeyDown);
+      Object(_dom__WEBPACK_IMPORTED_MODULE_9__[/* off */ "d"])(document.body, "keydown", this._onKeyDown);
       this.deselect();
       this.obTable.destroy();
       delete this.obActions, this.obBuffer, this.obSelector, this.obTable, this;

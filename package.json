@@ -1,6 +1,6 @@
 {
   "name": "js-table-cell-selector",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "description": "JS library allows you to select cells of HTML tables as well as cleaning, copying, cutting and pasting ",
   "main": "dist/tcs.bundle.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/darkridder/js-table-cell-selector"
   },
-  "keywords": [],
+  "keywords": ["js", "html", "table", "select"],
   "author": {
     "name": "DarkRiDDeR",
     "url": "https://progcode.ru"

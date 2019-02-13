@@ -11,13 +11,13 @@ import {SheetClip} from "./lib/sheetclip";
 export let _gOptions = {
     deselectOutTableClick: true,
     enableChanging: false,
+    enableHotkeys: true,
     getCellFn: function (cell, coord) {
         return cell.innerText;
     },
     ignoreClass: 'tcs-ignore',
     ignoreTfoot: false,
     ignoreThead: false,
-    initHotkeys: true,
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
@@ -34,6 +34,8 @@ export let _gOptions = {
 };
 
 export default class TableCellSelector {
+    enableChanging;
+    enableHotkeys;
     obActions;
     obBuffer;
     obSelector;
@@ -42,6 +44,8 @@ export default class TableCellSelector {
 
     constructor (table, options, buffer) {
         if (typeof options === "object") Object.assign(_gOptions, options);
+        this.enableChanging = _gOptions.enableChanging;
+        this.enableHotkeys = _gOptions.enableHotkeys;
         this.obSelector = new Selector(table);
         this.obTable = new Table(table, this.obSelector, this);
         this.obTable.onStartSelect = _gOptions.onStartSelect;
@@ -49,7 +53,7 @@ export default class TableCellSelector {
         this.obTable.onSelect = _gOptions.onSelect;
         this.obActions = new Actions(this.obSelector);
         this.obBuffer = buffer;
-        if (_gOptions.initHotkeys) on(document.body, "keydown", this._onKeyDown);
+        on(document.body, "keydown", this._onKeyDown);
     }
 
     static get Buffer () {
@@ -181,6 +185,7 @@ export default class TableCellSelector {
     }
 
     onKeyDown (e) {
+        if (!this.enableHotkeys) return;
         e = e || window.event;
         var key = e.which || e.keyCode; // keyCode detection
         var ctrl = e.ctrlKey ? e.ctrlKey : (key === 17); // ctrl detection
@@ -195,7 +200,7 @@ export default class TableCellSelector {
                 this.copy();
                 break;
             case 86: // v
-                if (!_gOptions.enableChanging) break;
+                if (!this.enableChanging) break;
                 if (this.obBuffer instanceof _Buffer) {
                     this.obBuffer.paste((str) => {
                         this.paste(SheetClip.parse(str));
@@ -203,12 +208,12 @@ export default class TableCellSelector {
                 }
                 break;
             case 88: // x
-                if (!_gOptions.enableChanging) break;
+                if (!this.enableChanging) break;
                 this.cut();
                 break;
             case 46: // delete
             case 8: // backspase
-                if (!_gOptions.enableChanging) break;
+                if (!this.enableChanging) break;
                 this.clear();
                 break;
             }
@@ -224,7 +229,6 @@ export default class TableCellSelector {
     set onFinishSelect (fn) {
         this.obTable.onFinishSelect = fn;
     }
-
 
     /**
      * paste (data [, c1 [, c2]])
@@ -270,7 +274,7 @@ export default class TableCellSelector {
     }
 
     destroy () {
-        if (_gOptions.initHotkeys) off(document.body, "keydown", this._onKeyDown);
+        off(document.body, "keydown", this._onKeyDown);
         this.deselect();
         this.obTable.destroy();
 

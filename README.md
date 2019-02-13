@@ -45,6 +45,7 @@ var tcs = new TableCellSelector(table, options, buffer);
 tcs.onStartSelect = function (event, cell) {
     console.log("start select");
 };
+tcs.enableHotkeys = true;
 ```
 
 ## Keyboard shortcuts
@@ -63,11 +64,11 @@ tcs.onStartSelect = function (event, cell) {
 |-------------------------|------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | deselectOutTableClick   | Bool             | true                                                    | Deselect when clicking is outside the table                                                                                |
 | enableChanging          | Bool             | false                                                   | The flag allows changing the table using key combinations                                                                  |
+| enableHotkeys           | Bool             | true                                                    | The flag of hotkeys enable                                                                                                 |
 | getCellFn               | Function         | function (cell, coord) { return cell.innerText; }       | Getting cell value                                                                                                         |
 | ignoreClass             | String           | 'tcs-ignore'                                            | You can add this class to a TR or TD                                                                                       |
 | ignoreTfoot             | Bool             | false                                                   | Ignore tag TFOOT and its contents                                                                                          |
 | ignoreThead             | Bool             | false                                                   | Ignore tag THEAD and its contents                                                                                          |
-| initHotkeys             | Bool             | true                                                    | Initialize hotkeys                                                                                                         |
 | mergePastingGlue        | String           | ' '                                                     | The gluing string when pasted into merged cells                                                                            |
 | mouseBlockSelection     | Bool             | true                                                    | Must be disabled when editing cell contents when contenteditable is true for selection to work                             |
 | selectClass             | String           | 'tcs-select'                                            | Class added to the cell when selecting                                                                                     |
