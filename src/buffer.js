@@ -2,11 +2,13 @@ import {on, off, isElement} from "./dom";
 
 export default class Buffer {
     fakeElem;
+    _onScroll = (e) => this.onScroll(e);
     _text;
 
     constructor (container) {
         this.container = isElement(container) ? container : document.body;
         this.initSelectFake();
+        on(window, "scroll", this._onScroll);
     }
 
     /**
@@ -42,11 +44,13 @@ export default class Buffer {
         // Move element out of screen horizontally
         this.fakeElem.style.position = 'absolute';
         this.fakeElem.style[ isRTL ? 'right' : 'left' ] = '-9999px';
-        // Move element to the same position vertically
-        let yPosition = window.pageYOffset || document.documentElement.scrollTop;
-        this.fakeElem.style.top = `${yPosition}px`;
 
         this.container.appendChild(this.fakeElem);
+    }
+
+    onScroll (e) {
+        let yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        this.fakeElem.style.top = yPosition+"px";
     }
 
     /**
@@ -70,9 +74,8 @@ export default class Buffer {
     }
 
     destroy() {
-        if (this.fakeElem) {
-            this.container.removeChild(this.fakeElem);
-            this.fakeElem = null;
-        }
+        this.container.removeChild(this.fakeElem);
+        this.fakeElem = null;
+        off(window, "scroll", this._onScroll);
     }
 }

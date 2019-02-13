@@ -936,14 +936,21 @@ var Buffer =
 /*#__PURE__*/
 function () {
   function Buffer(container) {
+    var _this = this;
+
     _classCallCheck(this, Buffer);
 
     _defineProperty(this, "fakeElem", void 0);
+
+    _defineProperty(this, "_onScroll", function (e) {
+      return _this.onScroll(e);
+    });
 
     _defineProperty(this, "_text", void 0);
 
     this.container = Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* isElement */ "c"])(container) ? container : document.body;
     this.initSelectFake();
+    Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* on */ "e"])(window, "scroll", this._onScroll);
   }
   /**
    * Executes the copy operation based on the current selection.
@@ -981,11 +988,14 @@ function () {
       this.fakeElem.style.margin = '0'; // Move element out of screen horizontally
 
       this.fakeElem.style.position = 'absolute';
-      this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px'; // Move element to the same position vertically
-
-      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
-      this.fakeElem.style.top = "".concat(yPosition, "px");
+      this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px';
       this.container.appendChild(this.fakeElem);
+    }
+  }, {
+    key: "onScroll",
+    value: function onScroll(e) {
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      this.fakeElem.style.top = yPosition + "px";
     }
     /**
      * Can only be called when the combination is pressed Ctrl + V
@@ -995,18 +1005,18 @@ function () {
   }, {
     key: "paste",
     value: function paste(callback) {
-      var _this = this;
+      var _this2 = this;
 
       this.fakeElem.value = "";
       this.fakeElem.focus();
 
       var onInput = function onInput(e) {
-        _this._text = e.target.value;
+        _this2._text = e.target.value;
 
-        _this.fakeElem.blur();
+        _this2.fakeElem.blur();
 
-        Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* off */ "d"])(_this.fakeElem, "input", onInput);
-        callback(_this._text);
+        Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* off */ "d"])(_this2.fakeElem, "input", onInput);
+        callback(_this2._text);
       };
 
       Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* on */ "e"])(this.fakeElem, "input", onInput);
@@ -1014,10 +1024,9 @@ function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      if (this.fakeElem) {
-        this.container.removeChild(this.fakeElem);
-        this.fakeElem = null;
-      }
+      this.container.removeChild(this.fakeElem);
+      this.fakeElem = null;
+      Object(_dom__WEBPACK_IMPORTED_MODULE_0__[/* off */ "d"])(window, "scroll", this._onScroll);
     }
   }, {
     key: "text",
