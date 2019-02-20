@@ -216,17 +216,21 @@ export default class Selector {
 
                 crestFn();
 
-                if (colspan > 1) {
-                    this.matrix[iy][ix][2] = itd;
-                    for (let i = 0; i > -colspan; i--) {
-                        this.matrix[iy][ix][1] = i;
+                try {
+                    if (colspan > 1) {
+                        this.matrix[iy][ix][2] = itd;
+                        for (let i = 0; i > -colspan; i--) {
+                            this.matrix[iy][ix][1] = i;
+                            if (rowspan > 1) rowCrest[ix] = rowspan - 1;
+                            ix++;
+                        }
+                    } else {
+                        this.matrix[iy][ix][2] = itd;
                         if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                         ix++;
                     }
-                } else {
-                    this.matrix[iy][ix][2] = itd;
-                    if (rowspan > 1) rowCrest[ix] = rowspan - 1;
-                    ix++;
+                } catch (e) {
+                    console.error("Error: going beyond the size matrix. " + e);
                 }
             }
 

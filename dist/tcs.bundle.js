@@ -2652,18 +2652,22 @@ function () {
             if (colspan > 1) _this.matrix[iy][ix][1] = 0;
             crestFn();
 
-            if (colspan > 1) {
-              _this.matrix[iy][ix][2] = itd;
+            try {
+              if (colspan > 1) {
+                _this.matrix[iy][ix][2] = itd;
 
-              for (var i = 0; i > -colspan; i--) {
-                _this.matrix[iy][ix][1] = i;
+                for (var i = 0; i > -colspan; i--) {
+                  _this.matrix[iy][ix][1] = i;
+                  if (rowspan > 1) rowCrest[ix] = rowspan - 1;
+                  ix++;
+                }
+              } else {
+                _this.matrix[iy][ix][2] = itd;
                 if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                 ix++;
               }
-            } else {
-              _this.matrix[iy][ix][2] = itd;
-              if (rowspan > 1) rowCrest[ix] = rowspan - 1;
-              ix++;
+            } catch (e) {
+              console.error("Error: going beyond the size matrix. " + e);
             }
           }
 
