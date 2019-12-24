@@ -153,6 +153,9 @@ Occurs when a new cell is selected, starting from the second cell (triggered on 
 
 **prevState** - flag that is true if the cell has already been selected otherwise false
 
+#### onDeselect(event, cell)
+Occurs when deselecting a cell
+
 #### onFinishSelect(event)
 Occurs at the finishing of a selection
 

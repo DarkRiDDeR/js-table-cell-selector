@@ -172,7 +172,10 @@
                 console.log("start select");
             },
             onSelect: function (prevState, cell, coord) {
-                console.log([prevState, cell, coord]);
+                console.log('select',prevState, coord);
+            },
+            onDeselect: function (cell, coord) {
+                console.log('deselect',coord);
             },
             onFinishSelect: function (event) {
                 console.log("finish select");

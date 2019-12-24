@@ -8,6 +8,7 @@ export default class Table {
     obSelector;
     obEvent;
     table; // html table
+    coord0; // initial coordinate of selection, real table cells
     _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);
     _onMouseDown = (e) => this.onMouseDown(e);
@@ -66,6 +67,7 @@ export default class Table {
         this.obSelector.deselectAll();
         this.obSelector.selectCell(cell);
         this.obEvent.startSelect(e, cell);
+        this.coord0 = [ cell.parentNode.rowIndex, cell.cellIndex ];
     }
 
     onMouseOver(e) {
@@ -74,10 +76,10 @@ export default class Table {
         let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
-        if ( !this.obSelector.isSelectedCell(cell) ) {
-            let coords = this.obSelector.getSelectedRectangleCoords( [cell.parentNode.rowIndex, cell.cellIndex] );
-            if ( coords !== false ) this.obSelector.select(coords[0], coords[1]);
-        }
+        //if ( !this.obSelector.isSelectedCell(cell) ) {
+        let coords = this.obSelector.getSelectedRectangleCoords( this.coord0, [cell.parentNode.rowIndex, cell.cellIndex] );
+        if ( coords !== false ) this.obSelector.select(coords[0], coords[1]);
+        // }
     }
 
     onMouseEnter () {

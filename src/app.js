@@ -2,7 +2,7 @@
 
 import Actions from "./actions";
 import _Buffer from "./buffer";
-import {isEmpty} from "./funcs";
+import {isEmpty, isUndef} from "./funcs";
 import Selector from "./selector";
 import Event from "./event";
 import Table from "./table";
@@ -23,6 +23,7 @@ export let _gOptions = {
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
     onSelect: function (prevState, cell, coord) { },
+    onDeselect: function (cell, coord) { },
     onStartSelect: function (e, cell) { },
     onFinishSelect: function (e) { },
     selectIgnoreClass: true,
@@ -53,6 +54,7 @@ export default class TableCellSelector {
         this.obEvent.startSelect = _gOptions.onStartSelect;
         this.obEvent.finishSelect = _gOptions.onFinishSelect;
         this.obEvent.select = _gOptions.onSelect;
+        this.obEvent.deselect = _gOptions.onDeselect;
 
         this.obSelector = new Selector(table, this.obEvent);
         this.obTable = new Table(table, this.obSelector, this.obEvent, this);
@@ -72,13 +74,13 @@ export default class TableCellSelector {
      * @returns {boolean}
      */
     clear (c1, c2) {
-        if (c1 === undefined) {
+        if (isUndef(c1)) {
             let coords = this.obSelector.getSelectedRectangleCoords();
             if (coords === false) return false;
             [c1, c2] = coords;
         }
 
-        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
+        if (!isUndef(c2)) [c1, c2] = this.normalizeCoords(c1, c2);
         else c2 = c1 = this.normalizeCoords(c1);
 
         this.obActions.clear(c1, c2);
@@ -92,14 +94,14 @@ export default class TableCellSelector {
      * @returns {array[][] | false}
      */
     copy (c1, c2) {
-        if (c1 === undefined) {
+        if (isUndef(c1)) {
             let coords = this.obSelector.getSelectedRectangleCoords();
             if (coords === false) return false;
             [c1, c2] = coords;
         }
 
-        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
-        else c2 = c1 = this.normalizeCoords(c1);
+        if (isUndef(c2)) c2 = c1 = this.normalizeCoords(c1);
+        else [c1, c2] = this.normalizeCoords(c1, c2);
 
         const data = this.obActions.copy(c1, c2);
         if (this.obBuffer instanceof _Buffer &&  data !== false) {
@@ -116,14 +118,14 @@ export default class TableCellSelector {
      * @returns {array[][] | false}
      */
     cut (c1, c2) {
-        if (c1 === undefined) {
+        if (isUndef(c1)) {
             let coords = this.obSelector.getSelectedRectangleCoords();
             if (isEmpty(coords)) return false;
             [c1, c2] = coords;
         }
 
-        if (c2 !== undefined) [c1, c2] = this.normalizeCoords(c1, c2);
-        else c2 = c1 = this.normalizeCoords(c1);
+        if (isUndef(c2)) c2 = c1 = this.normalizeCoords(c1);
+        else [c1, c2] = this.normalizeCoords(c1, c2);
 
         const data = this.obActions.cut(c1, c2);
         if (this.obBuffer instanceof _Buffer && data !== false) {
@@ -167,7 +169,7 @@ export default class TableCellSelector {
         // normalize
         c1[0] = parseInt(c1[0]) || 0;
         c1[1] = parseInt(c1[1]) || 0;
-        if (c2 === undefined) {
+        if (isUndef(c2)) {
             return c1;
         } else {
             c2[0] = parseInt(c2[0]) || 0;
@@ -242,11 +244,11 @@ export default class TableCellSelector {
      * @param c2 - end position [1, 1]
      */
     paste (data, c1, c2) {
-        if (c1 === undefined) {
+        if (isUndef(c1)) {
             let coords = this.obSelector.getSelectedRectangleCoords();
             if (coords === false) return false;
             c1 = this.normalizeCoords(coords[0]);
-        } else if (c2 !== undefined) {
+        } else if (!isUndef(c2)) {
             [c1, c2] = this.normalizeCoords(c1, c2);
             [c1, c2] = this.obSelector.getRectangleCoords(c1, c2);
         }
@@ -262,10 +264,10 @@ export default class TableCellSelector {
      */
     select (c1, c2) {
         this.obSelector.deselectAll();
-        if (c2 !== undefined) {
-            [c1, c2] = this.normalizeCoords(c1, c2);
-        } else {
+        if (isUndef(c2)) {
             c1 = this.normalizeCoords(c1);
+        } else {
+            [c1, c2] = this.normalizeCoords(c1, c2);
         }
         return this.obSelector.select(c1, c2);
     }

@@ -1,5 +1,6 @@
 import {_gOptions} from "./app";
 import {getElementsByTagNames} from "./dom";
+import {isUndef} from "./funcs";
 
 export default class Actions {
     obSelector;
@@ -87,12 +88,12 @@ export default class Actions {
 
         let maxY = c1[0] + data.length;
         if (maxY > countR) maxY = countR;
-        if (c2 !== undefined && maxY > c2[0]) maxY = c2[0]+1;
+        if (!isUndef(c2) && maxY > c2[0]) maxY = c2[0]+1;
 
         for (let iy = c1[0]; iy < maxY; iy++) {
             let maxX = c1[1] + data[iy-c1[0]].length;
             if (maxX > countC) maxX = countC;
-            if (c2 !== undefined && maxX > c2[1]) maxX = c2[1]+1;
+            if (isUndef(c2) && maxX > c2[1]) maxX = c2[1]+1;
 
             let cellFn;
             for (let ix = c1[1]; ix < maxX; ix++) {
