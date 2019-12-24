@@ -148,8 +148,10 @@ Select all cells
 #### onStartSelect(event, cell)
 Occurs at the starting of a selection
 
-#### onSelect(event, cell)
-Occurs when a new cell is selected, starting from the second cell. The first is triggered onStartSelect
+#### onSelect(prevState, cell, coord)
+Occurs when a new cell is selected, starting from the second cell (triggered on each cell in the selection). The first is triggered onStartSelect
+
+**prevState** - flag that is true if the cell has already been selected otherwise false
 
 #### onFinishSelect(event)
 Occurs at the finishing of a selection

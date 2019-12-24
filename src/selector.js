@@ -6,10 +6,12 @@ export default class Selector {
     _countCols = 0;
     _countRows = 0;
     _table;
+    obEvent;
     matrix;
 
-    constructor (table) {
+    constructor (table, obEvent) {
         this._table = table;
+        this.obEvent = obEvent;
         /*if (_gOptions.usingSizeMatrix) */ this.initSizeMatrix();
     }
 
@@ -70,7 +72,7 @@ export default class Selector {
      * get coords of selected cells
      * @returns array [[0, 0], [1, 1]] or false
      */
-    getSelectedRectangleCoords () {
+    getSelectedRectangleCoords ( selectC ) {
         let isSelected = false;
         let c1 = Array(2);
         let c2 = Array(2);
@@ -84,7 +86,10 @@ export default class Selector {
                 if (
                     !(this.matrix[iy][ix][0] < 0)
                     && !(this.matrix[iy][ix][1] < 0)
-                    && this.isSelectedCell(cells[this.matrix[iy][ix][2]])
+                    && (
+                        this.isSelectedCell(cells[this.matrix[iy][ix][2]])
+                        || (Array.isArray(selectC) && selectC[0] === iy && selectC[1] === this.matrix[iy][ix][2])
+                    )
                 ) {
                     isSelected = true;
 
@@ -257,7 +262,7 @@ export default class Selector {
      * @param c2 - end position [1, 1]
      * @returns {boolean}
      */
-    select (c1, c2)
+    select (c1, c2, type)
     {
         if (c2 === undefined || (c1[0] == c2[0] && c1[1] == c2[1])) {
             // normalize
@@ -282,7 +287,10 @@ export default class Selector {
                 let cells = getElementsByTagNames("td, th", rows[iy]);
                 for (let ix = c1[1]; ix <= c2[1]; ix++) {
                     if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                        let result = this.selectCell(cells[this.matrix[iy][ix][2]]);
+                        let cell = cells[this.matrix[iy][ix][2]];
+                        let prevSelectionState = hasClass( cell, _gOptions.selectClass );
+                        let result = this.selectCell( cell );
+                        this.obEvent.select( prevSelectionState, cell, [ iy, ix ] );
                         if (!isSelected) isSelected = result;
                     }
                 }

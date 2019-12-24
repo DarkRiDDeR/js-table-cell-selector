@@ -6,9 +6,7 @@ export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
     obApp;
     obSelector;
-    onStartSelect;
-    onSelect;
-    onFinishSelect;
+    obEvent;
     table; // html table
     _isMouse = false;
     _onMouseOver = (e) => this.onMouseOver(e);
@@ -18,11 +16,12 @@ export default class Table {
     _onMouseUp = (e) => this.onMouseUp(e);
     _onOutTableClick = (e) => this.onOutTableClick(e);
 
-    constructor(table, obSelector, obApp) {
+    constructor(table, obSelector, obEvent, obApp) {
         if (isElement(table) && table.tagName === "TABLE") {
             this.table = table; // DOM element table
             this.obApp = obApp;
             this.obSelector = obSelector;
+            this.obEvent = obEvent;
             addClass(this.table, _gOptions.tableClass);
             this.addEvents();
         } else {
@@ -66,7 +65,7 @@ export default class Table {
 
         this.obSelector.deselectAll();
         this.obSelector.selectCell(cell);
-        this.onStartSelect(e, cell);
+        this.obEvent.startSelect(e, cell);
     }
 
     onMouseOver(e) {
@@ -75,27 +74,26 @@ export default class Table {
         let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
-        !this.obSelector.isSelectedCell(cell) && this.obSelector.selectCell(cell) && this.onSelect(e, cell);
-
-        //magic selection
-        let coords = this.obSelector.getSelectedRectangleCoords();
-        if (coords !== false) this.obSelector.select(coords[0], coords[1]);
+        if ( !this.obSelector.isSelectedCell(cell) ) {
+            let coords = this.obSelector.getSelectedRectangleCoords( [cell.parentNode.rowIndex, cell.cellIndex] );
+            if ( coords !== false ) this.obSelector.select(coords[0], coords[1]);
+        }
     }
 
-    onMouseEnter (e) {
+    onMouseEnter () {
         this._isMouse = true;
     }
 
-    onMouseLeave (e) {
+    onMouseLeave () {
         this._isMouse = false;
     }
 
     onMouseUp(e) {
-        if (this.isMouseDown) this.onFinishSelect(e);
+        if (this.isMouseDown) this.obEvent.finishSelect(e);
         this.isMouseDown = false;
     }
 
-    onOutTableClick(e) {
+    onOutTableClick() {
         this.isMouseDown = false;
         if (_gOptions.deselectOutTableClick && !this.isMouse) {
             this.obSelector.deselectAll();

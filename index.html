@@ -171,8 +171,8 @@
             onStartSelect: function (event, cell) {
                 console.log("start select");
             },
-            onSelect: function (event, cell) {
-                console.log("select");
+            onSelect: function (prevState, cell, coord) {
+                console.log([prevState, cell, coord]);
             },
             onFinishSelect: function (event) {
                 console.log("finish select");

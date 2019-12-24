@@ -4,6 +4,7 @@ import Actions from "./actions";
 import _Buffer from "./buffer";
 import {isEmpty} from "./funcs";
 import Selector from "./selector";
+import Event from "./event";
 import Table from "./table";
 import {off, on} from "./dom";
 import {SheetClip} from "./lib/sheetclip";
@@ -21,7 +22,7 @@ export let _gOptions = {
     //TODO: mergePasting: true,
     mergePastingGlue: ' ',
     mouseBlockSelection: true,
-    onSelect: function (e, cell) { },
+    onSelect: function (prevState, cell, coord) { },
     onStartSelect: function (e, cell) { },
     onFinishSelect: function (e) { },
     selectIgnoreClass: true,
@@ -39,6 +40,7 @@ export default class TableCellSelector {
     obActions;
     obBuffer;
     obSelector;
+    obEvent;
     obTable;
     _onKeyDown = (e) => this.onKeyDown(e);
 
@@ -46,11 +48,14 @@ export default class TableCellSelector {
         if (typeof options === "object") Object.assign(_gOptions, options);
         this.enableChanging = _gOptions.enableChanging;
         this.enableHotkeys = _gOptions.enableHotkeys;
-        this.obSelector = new Selector(table);
-        this.obTable = new Table(table, this.obSelector, this);
-        this.obTable.onStartSelect = _gOptions.onStartSelect;
-        this.obTable.onFinishSelect = _gOptions.onFinishSelect;
-        this.obTable.onSelect = _gOptions.onSelect;
+
+        this.obEvent = new Event();
+        this.obEvent.startSelect = _gOptions.onStartSelect;
+        this.obEvent.finishSelect = _gOptions.onFinishSelect;
+        this.obEvent.select = _gOptions.onSelect;
+
+        this.obSelector = new Selector(table, this.obEvent);
+        this.obTable = new Table(table, this.obSelector, this.obEvent, this);
         this.obActions = new Actions(this.obSelector);
         this.obBuffer = buffer;
         on(document.body, "keydown", this._onKeyDown);
@@ -221,13 +226,13 @@ export default class TableCellSelector {
     }
 
     set onStartSelect (fn) {
-        this.obTable.onStartSelect = fn;
+        this.obEvent.startSelect = fn;
     }
     set onSelect (fn) {
-        this.obTable.onSelect = fn;
+        this.obEvent.select = fn;
     }
     set onFinishSelect (fn) {
-        this.obTable.onFinishSelect = fn;
+        this.obEvent.finishSelect = fn;
     }
 
     /**
