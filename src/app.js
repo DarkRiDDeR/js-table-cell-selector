@@ -32,7 +32,6 @@ export let _gOptions = {
         cell.innerText = data;
     },
     tableClass: 'tcs',// class added to table
-    //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
 };
 
 export default class TableCellSelector {

@@ -102,17 +102,13 @@ export default class Table {
         }
     }
 
-    removeEvents() {
+    destroy() {
         off(this.table, "mouseover", this._onMouseOver);
         off(this.table, "mousedown", this._onMouseDown);
         off(this.table, "mouseenter", this._onMouseEnter);
         off(this.table, "mouseleave", this._onMouseLeave);
         off(document.body, "mouseup", this._onMouseUp);
         off(this.table.ownerDocument, "click", this._onOutTableClick);
-    }
-
-    destroy() {
-        removeClass(this.table, _gOptions.tableClass);
         this.removeEvents();
     }
 }

@@ -329,7 +329,6 @@ var _gOptions = {
     cell.innerText = data;
   },
   tableClass: 'tcs' // class added to table
-  //frozen option:  usingSizeMatrix: true, // !!! for tables with merged cells, enabling is mandatory. Shutdown optimizes performance for simple tables.
 
 };
 
@@ -3673,8 +3672,6 @@ function () {
 
     this._table = table;
     this.obEvent = obEvent;
-    /*if (_gOptions.usingSizeMatrix) */
-
     this.initSizeMatrix();
   }
 
@@ -3686,36 +3683,18 @@ function () {
   }, {
     key: "deselectAll",
     value: function deselectAll() {
+      var _this = this;
+
       var length = 0;
-      var list = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td,th", this.table);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      this.goCells(function (cell, coord) {
+        if (_this.isSelectedCell(cell)) {
+          _this.deselectCell(cell);
 
-      try {
-        for (var _iterator = list[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var cell = _step.value;
+          _this.obEvent.deselect(cell, coord);
 
-          if (this.isSelectedCell(cell)) {
-            this.deselectCell(cell);
-            length++;
-          }
+          length++;
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
+      });
       return length;
     }
     /**
@@ -3727,25 +3706,12 @@ function () {
     key: "getCell",
     value: function getCell(c) {
       if (c[0] >= 0 && c[1] >= 0) {
-        //if (_gOptions.usingSizeMatrix) {
         if (c[0] < this.countRows && c[1] < this.countCols) {
           if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
           if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
           var row = this.table.getElementsByTagName("tr")[c[0]];
           return Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td,th", row)[this.matrix[c[0]][c[1]][2]];
         }
-        /*} else {
-            let rows = this.table.getElementsByTagName("tr");
-            for (let iy = 0; iy < rows.length; iy++) {
-                if (c[0] != iy) continue;
-                let cols = rows[iy].getElementsByTagName("td");
-                for (let ix = 0; ix < cols.length; ix++) {
-                    if (c[1] != ix) continue;
-                    return cols[ix];
-                }
-            }
-        }*/
-
       }
     }
   }, {
@@ -3756,53 +3722,31 @@ function () {
      * @returns array [[0, 0], [1, 1]] or false
      */
     value: function getSelectedRectangleCoords(sc0, sc1) {
+      var _this2 = this;
+
       var isSelected = false;
       var c1 = Array(2);
       var c2 = Array(2);
-      var scIsAr = Array.isArray(sc0) && Array.isArray(sc1); //if (_gOptions.usingSizeMatrix) {
-      // get extreme points
+      var scIsAr = Array.isArray(sc0) && Array.isArray(sc1);
+      this.goCells(function (cell, coord) {
+        var _coord = _slicedToArray(coord, 2),
+            iy = _coord[0],
+            ix = _coord[1];
 
-      var rows = this.table.getElementsByTagName("tr");
-
-      for (var iy = 0; iy < this.countRows; iy++) {
-        var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td,th", rows[iy]);
-
-        for (var ix = 0; ix < this.countCols; ix++) {
-          if (this.matrix[iy][ix][0] < 0 || this.matrix[iy][ix][1] < 0) continue;
-
-          if (scIsAr) {
-            if ((sc0[0] !== iy || sc0[1] !== this.matrix[iy][ix][2]) && (sc1[0] !== iy || sc1[1] !== this.matrix[iy][ix][2])) {
-              continue;
-            }
-          } else {
-            if (!this.isSelectedCell(cells[this.matrix[iy][ix][2]])) continue;
+        if (scIsAr) {
+          if ((sc0[0] !== iy || sc0[1] !== _this2.matrix[iy][ix][2]) && (sc1[0] !== iy || sc1[1] !== _this2.matrix[iy][ix][2])) {
+            return;
           }
-
-          isSelected = true;
-          if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c1[0]) || c1[0] > iy) c1[0] = iy;
-          if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c1[1]) || c1[1] > ix) c1[1] = ix;
-          if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c2[0]) || c2[0] < iy) c2[0] = iy;
-          if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c2[1]) || c2[1] < ix) c2[1] = ix;
+        } else {
+          if (!_this2.isSelectedCell(cell)) return;
         }
-      }
-      /*} else {
-          let rows = this.table.getElementsByTagName("tr");
-          for (let iy = 0; iy < rows.length; iy++) {
-              let cols = rows[iy].getElementsByTagName("td");
-              for (let ix = 0; ix < cols.length; ix++) {
-                  if(this.isSelectedCell(cols[ix]))
-                  {
-                      isSelected = true;
-                       if (c1[0] === undefined || iy < c1[0]) c1[0] = iy;
-                      if (c2[0] === undefined || iy > c2[0]) c2[0] = iy;
-                       if (c1[1] === undefined || ix < c1[1]) c1[1] = ix;
-                      if (c2[1] === undefined || ix > c2[1]) c2[1] = ix;
-                  }
-              }
-          }
-      }*/
 
-
+        isSelected = true;
+        if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c1[0]) || c1[0] > iy) c1[0] = iy;
+        if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c1[1]) || c1[1] > ix) c1[1] = ix;
+        if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c2[0]) || c2[0] < iy) c2[0] = iy;
+        if (Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* isUndef */ "d"])(c2[1]) || c2[1] < ix) c2[1] = ix;
+      });
       return isSelected ? [c1, c2] : false;
     }
   }, {
@@ -3864,18 +3808,18 @@ function () {
   }, {
     key: "initSizeMatrix",
     value: function initSizeMatrix() {
-      var _this = this;
+      var _this3 = this;
 
       var rows = this.table.getElementsByTagName("tr");
       this._countRows = rows.length;
       this._countCols = 0;
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
       try {
-        for (var _iterator2 = rows[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var row = _step2.value;
+        for (var _iterator = rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var row = _step.value;
           var length = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td, th", row).length;
 
           if (length > this.countCols) {
@@ -3883,42 +3827,42 @@ function () {
           }
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError = true;
+        _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError) {
+            throw _iteratorError;
           }
         }
       }
 
       this.matrix = Array(this.countRows).fill().map(function () {
-        return Array(_this.countCols).fill().map(function () {
+        return Array(_this3.countCols).fill().map(function () {
           return Array(2);
         });
       });
       var rowCrest = new Array(this.countCols).fill(0);
       var iy = 0;
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
         var _loop = function _loop() {
-          var row = _step3.value;
+          var row = _step2.value;
           var ix = 0;
           var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td, th", row);
 
           var crestFn = function crestFn() {
-            while (ix < _this.countCols && rowCrest[ix]) {
+            while (ix < _this3.countCols && rowCrest[ix]) {
               rowCrest[ix]--;
-              _this.matrix[iy][ix][0] = _this.matrix[iy - 1][ix][0] || 0 - 1;
-              _this.matrix[iy][ix][1] = _this.matrix[iy - 1][ix][1];
+              _this3.matrix[iy][ix][0] = _this3.matrix[iy - 1][ix][0] || 0 - 1;
+              _this3.matrix[iy][ix][1] = _this3.matrix[iy - 1][ix][1];
               ix++;
             }
           };
@@ -3927,21 +3871,21 @@ function () {
             var cell = cells[itd];
             var colspan = cell.getAttribute("colspan");
             var rowspan = cell.getAttribute("rowspan");
-            if (rowspan > 1) _this.matrix[iy][ix][0] = 0;
-            if (colspan > 1) _this.matrix[iy][ix][1] = 0;
+            if (rowspan > 1) _this3.matrix[iy][ix][0] = 0;
+            if (colspan > 1) _this3.matrix[iy][ix][1] = 0;
             crestFn();
 
             try {
               if (colspan > 1) {
-                _this.matrix[iy][ix][2] = itd;
+                _this3.matrix[iy][ix][2] = itd;
 
                 for (var i = 0; i > -colspan; i--) {
-                  _this.matrix[iy][ix][1] = i;
+                  _this3.matrix[iy][ix][1] = i;
                   if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                   ix++;
                 }
               } else {
-                _this.matrix[iy][ix][2] = itd;
+                _this3.matrix[iy][ix][2] = itd;
                 if (rowspan > 1) rowCrest[ix] = rowspan - 1;
                 ix++;
               }
@@ -3954,20 +3898,20 @@ function () {
           iy++;
         };
 
-        for (var _iterator3 = rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (var _iterator2 = rows[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           _loop();
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-            _iterator3.return();
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
           }
         } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
@@ -3995,8 +3939,9 @@ function () {
   }, {
     key: "select",
     value: function select(c1, c2) {
-      var isSelected = false; //if (_gOptions.usingSizeMatrix) {
+      var _this4 = this;
 
+      var isSelected = false;
       if (c1[0] >= this.countRows || c1[1] >= this.countCols || c2[0] < 0 || c2[1] < 0) return false;
       if (c1[0] < 0) c1[0] = 0;
       if (c1[1] < 0) c1[1] = 0;
@@ -4009,77 +3954,42 @@ function () {
 
       c1 = _this$getRectangleCoo2[0];
       c2 = _this$getRectangleCoo2[1];
-      var rows = this.table.getElementsByTagName("tr");
+      this.goCells(function (cell, coord) {
+        var prevState = Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* hasClass */ "b"])(cell, _app__WEBPACK_IMPORTED_MODULE_10__["_gOptions"].selectClass);
 
-      for (var iy = 0; iy < this.countRows; iy++) {
-        var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td, th", rows[iy]);
+        if (coord[0] < c1[0] || coord[0] > c2[0] || coord[1] < c1[1] || coord[1] > c2[1]) {
+          if (prevState) {
+            _this4.deselectCell(cell);
 
-        for (var ix = 0; ix < this.countCols; ix++) {
-          if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-            var cell = cells[this.matrix[iy][ix][2]];
-            var prevState = Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* hasClass */ "b"])(cell, _app__WEBPACK_IMPORTED_MODULE_10__["_gOptions"].selectClass);
-
-            if (iy < c1[0] || iy > c2[0] || ix < c1[1] || ix > c2[1]) {
-              if (prevState) {
-                this.deselectCell(cell);
-                this.obEvent.deselect(cell, [iy, ix]);
-              }
-            } else {
-              var result = this.selectCell(cell);
-              this.obEvent.select(prevState, cell, [iy, ix]);
-              if (!isSelected) isSelected = result;
-            }
+            _this4.obEvent.deselect(cell, coord);
           }
+        } else {
+          var result = _this4.selectCell(cell);
+
+          _this4.obEvent.select(prevState, cell, coord);
+
+          if (!isSelected) isSelected = result;
         }
-      }
-      /*} else {
-           let rows = this.table.getElementsByTagName("tr");
-          for (let iy = 0; iy < rows.length; iy++) {
-              if (iy < c1[0] || iy > c2[0]) continue;
-              let cols = rows[iy].getElementsByTagName("td");
-              for (let ix = 0; ix < cols.length; ix++) {
-                  if (ix < c1[1] || ix > c2[1]) continue;
-                  let result = this.selectCell(cols[ix]);
-                  if (!isSelected) isSelected = result;
-              }
-          }
-      }*/
-
-
+      });
       return isSelected;
     }
   }, {
     key: "selectAll",
     value: function selectAll() {
+      var _this5 = this;
+
       var length = 0;
-      var list = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td, th", this.table);
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
+      this.goCells(function (cell, coord) {
+        var prevState = Object(_funcs__WEBPACK_IMPORTED_MODULE_12__[/* hasClass */ "b"])(cell, _app__WEBPACK_IMPORTED_MODULE_10__["_gOptions"].selectClass);
 
-      try {
-        for (var _iterator4 = list[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var cell = _step4.value;
+        var result = _this5.selectCell(cell);
 
-          if (this.selectCell(cell)) {
-            length++;
-          }
+        if (result) {
+          _this5.obEvent.select(prevState, cell, coord);
+
+          length++;
         }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-
+      });
       return length;
     }
   }, {
@@ -4091,6 +4001,21 @@ function () {
       }
 
       return false;
+    }
+  }, {
+    key: "goCells",
+    value: function goCells(fn) {
+      var rows = this.table.getElementsByTagName("tr");
+
+      for (var iy = 0; iy < this.countRows; iy++) {
+        var cells = Object(_dom__WEBPACK_IMPORTED_MODULE_11__[/* getElementsByTagNames */ "a"])("td, th", rows[iy]);
+
+        for (var ix = 0; ix < this.countCols; ix++) {
+          if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+            fn(cells[this.matrix[iy][ix][2]], [iy, ix]);
+          }
+        }
+      }
     }
   }, {
     key: "countCols",
@@ -4297,19 +4222,14 @@ function () {
       }
     }
   }, {
-    key: "removeEvents",
-    value: function removeEvents() {
+    key: "destroy",
+    value: function destroy() {
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseover", this._onMouseOver);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mousedown", this._onMouseDown);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseenter", this._onMouseEnter);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table, "mouseleave", this._onMouseLeave);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(document.body, "mouseup", this._onMouseUp);
       Object(_dom__WEBPACK_IMPORTED_MODULE_1__[/* off */ "d"])(this.table.ownerDocument, "click", this._onOutTableClick);
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      Object(_funcs__WEBPACK_IMPORTED_MODULE_2__[/* removeClass */ "e"])(this.table, _app__WEBPACK_IMPORTED_MODULE_0__["_gOptions"].tableClass);
       this.removeEvents();
     }
   }, {

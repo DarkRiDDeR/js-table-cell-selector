@@ -12,7 +12,7 @@ export default class Selector {
     constructor (table, obEvent) {
         this._table = table;
         this.obEvent = obEvent;
-        /*if (_gOptions.usingSizeMatrix) */ this.initSizeMatrix();
+        this.initSizeMatrix();
     }
 
     deselectCell(cell) {
@@ -21,14 +21,15 @@ export default class Selector {
 
     deselectAll() {
         let length = 0;
-        let list = getElementsByTagNames("td,th", this.table);
 
-        for (let cell of list) {
+        this.goCells( ( cell, coord) => {
             if (this.isSelectedCell(cell)) {
                 this.deselectCell(cell);
+                this.obEvent.deselect( cell, coord );
                 length++;
             }
-        }
+        } );
+
         return length;
     }
 
@@ -38,7 +39,6 @@ export default class Selector {
      */
     getCell (c) {
         if (c[0] >= 0 && c[1] >= 0) {
-            //if (_gOptions.usingSizeMatrix) {
             if (c[0] < this.countRows && c[1] < this.countCols) {
                 if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
                 if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
@@ -46,17 +46,6 @@ export default class Selector {
                 let row = this.table.getElementsByTagName("tr")[c[0]];
                 return getElementsByTagNames("td,th", row)[this.matrix[c[0]][c[1]][2]];
             }
-            /*} else {
-                let rows = this.table.getElementsByTagName("tr");
-                for (let iy = 0; iy < rows.length; iy++) {
-                    if (c[0] != iy) continue;
-                    let cols = rows[iy].getElementsByTagName("td");
-                    for (let ix = 0; ix < cols.length; ix++) {
-                        if (c[1] != ix) continue;
-                        return cols[ix];
-                    }
-                }
-            }*/
         }
     }
 
@@ -78,49 +67,26 @@ export default class Selector {
         let c2 = Array(2);
         const scIsAr = Array.isArray(sc0) && Array.isArray(sc1);
 
-        //if (_gOptions.usingSizeMatrix) {
-        // get extreme points
-        let rows = this.table.getElementsByTagName("tr");
-        for (let iy = 0; iy < this.countRows; iy++) {
-            let cells = getElementsByTagNames("td,th", rows[iy]);
-            for (let ix = 0; ix < this.countCols; ix++) {
-                if ( this.matrix[iy][ix][0] < 0 || this.matrix[iy][ix][1] < 0 ) continue;
+        this.goCells( ( cell, coord) => {
+            let [ iy, ix ] = coord;
 
-                if ( scIsAr ) {
-                    if ((sc0[0] !== iy || sc0[1] !== this.matrix[iy][ix][2]) && (sc1[0] !== iy || sc1[1] !== this.matrix[iy][ix][2])) {
-                        continue;
-                    }
-                } else {
-                    if (!this.isSelectedCell(cells[this.matrix[iy][ix][2]])) continue;
+            if ( scIsAr ) {
+                if ((sc0[0] !== iy || sc0[1] !== this.matrix[iy][ix][2]) && (sc1[0] !== iy || sc1[1] !== this.matrix[iy][ix][2])) {
+                    return;
                 }
-
-                isSelected = true;
-
-                if (isUndef(c1[0]) || c1[0] > iy) c1[0] = iy;
-                if (isUndef(c1[1]) || c1[1] > ix) c1[1] = ix;
-
-                if (isUndef(c2[0]) || c2[0] < iy) c2[0] = iy;
-                if (isUndef(c2[1]) || c2[1] < ix) c2[1] = ix;
+            } else {
+                if (!this.isSelectedCell( cell )) return;
             }
-        }
-        /*} else {
-            let rows = this.table.getElementsByTagName("tr");
-            for (let iy = 0; iy < rows.length; iy++) {
-                let cols = rows[iy].getElementsByTagName("td");
-                for (let ix = 0; ix < cols.length; ix++) {
-                    if(this.isSelectedCell(cols[ix]))
-                    {
-                        isSelected = true;
 
-                        if (c1[0] === undefined || iy < c1[0]) c1[0] = iy;
-                        if (c2[0] === undefined || iy > c2[0]) c2[0] = iy;
+            isSelected = true;
 
-                        if (c1[1] === undefined || ix < c1[1]) c1[1] = ix;
-                        if (c2[1] === undefined || ix > c2[1]) c2[1] = ix;
-                    }
-                }
-            }
-        }*/
+            if (isUndef(c1[0]) || c1[0] > iy) c1[0] = iy;
+            if (isUndef(c1[1]) || c1[1] > ix) c1[1] = ix;
+
+            if (isUndef(c2[0]) || c2[0] < iy) c2[0] = iy;
+            if (isUndef(c2[1]) || c2[1] < ix) c2[1] = ix;
+        } );
+
         return isSelected ? [c1, c2] : false;
     }
 
@@ -268,7 +234,6 @@ export default class Selector {
     {
         let isSelected = false;
 
-        //if (_gOptions.usingSizeMatrix) {
         if (c1[0] >= this.countRows || c1[1] >= this.countCols || c2[0] < 0 || c2[1] < 0) return false;
         if (c1[0] < 0) c1[0] = 0;
         if (c1[1] < 0) c1[1] = 0;
@@ -277,57 +242,39 @@ export default class Selector {
 
         [c1, c2] = this.getRectangleCoords(c1, c2);
 
-        let rows = this.table.getElementsByTagName("tr");
-        for (let iy = 0; iy < this.countRows; iy++) {
-            let cells = getElementsByTagNames("td, th", rows[iy]);
-            for (let ix = 0; ix < this.countCols; ix++) {
-                if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
-                    let cell = cells[this.matrix[iy][ix][2]];
-                    let prevState = hasClass( cell, _gOptions.selectClass );
+        this.goCells( ( cell, coord) => {
+            let prevState = hasClass( cell, _gOptions.selectClass );
 
-                    if ( iy < c1[0] || iy > c2[0] || ix < c1[1] || ix > c2[1] ) {
-                        if ( prevState ) {
-                            this.deselectCell(cell);
-                            this.obEvent.deselect(cell, [iy, ix]);
-                        }
-                    } else {
-                        let result = this.selectCell( cell );
-                        this.obEvent.select( prevState, cell, [ iy, ix ] );
-                        if (!isSelected) isSelected = result;
-                    }
-
-
+            if ( coord[0] < c1[0] || coord[0] > c2[0] || coord[1] < c1[1] || coord[1] > c2[1] ) {
+                if ( prevState ) {
+                    this.deselectCell(cell);
+                    this.obEvent.deselect( cell, coord );
                 }
+            } else {
+                let result = this.selectCell( cell );
+                this.obEvent.select( prevState, cell, coord );
+                if (!isSelected) isSelected = result;
             }
-        }
+        } );
 
-
-        /*} else {
-
-            let rows = this.table.getElementsByTagName("tr");
-            for (let iy = 0; iy < rows.length; iy++) {
-                if (iy < c1[0] || iy > c2[0]) continue;
-                let cols = rows[iy].getElementsByTagName("td");
-                for (let ix = 0; ix < cols.length; ix++) {
-                    if (ix < c1[1] || ix > c2[1]) continue;
-                    let result = this.selectCell(cols[ix]);
-                    if (!isSelected) isSelected = result;
-                }
-            }
-        }*/
         return isSelected;
     }
 
     selectAll () {
         let length = 0;
-        let list = getElementsByTagNames("td, th", this.table);
-        for (let cell of list) {
-            if (this.selectCell(cell)) {
+
+        this.goCells( ( cell, coord) => {
+            let prevState = hasClass( cell, _gOptions.selectClass );
+            let result = this.selectCell( cell );
+            if ( result ) {
+                this.obEvent.select( prevState, cell, coord );
                 length++;
             }
-        }
+        } );
+
         return length;
     }
+
 
     selectCell(cell) {
         if (_gOptions.selectIgnoreClass || !this.isIgnoredCell(cell)) {
@@ -335,6 +282,19 @@ export default class Selector {
             return true;
         }
         return false;
+    }
+
+    goCells ( fn ) {
+        let rows = this.table.getElementsByTagName("tr");
+        for (let iy = 0; iy < this.countRows; iy++) {
+            let cells = getElementsByTagNames("td, th", rows[iy]);
+            for (let ix = 0; ix < this.countCols; ix++) {
+                if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
+                    fn( cells[this.matrix[iy][ix][2]], [ iy, ix ] );
+                }
+            }
+        }
+
     }
 
     get table () {
