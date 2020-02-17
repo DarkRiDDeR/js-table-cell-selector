@@ -39,6 +39,15 @@ export default class Table {
         on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
 
+    removeEvents() {
+        off(this.table, "mouseover", this._onMouseOver);
+        off(this.table, "mousedown", this._onMouseDown);
+        off(this.table, "mouseenter", this._onMouseEnter);
+        off(this.table, "mouseleave", this._onMouseLeave);
+        off(document.body, "mouseup", this._onMouseUp);
+        off(this.table.ownerDocument, "click", this._onOutTableClick);
+    }
+
     get isMouse () {
         return this._isMouse;
     }
@@ -103,12 +112,6 @@ export default class Table {
     }
 
     destroy() {
-        off(this.table, "mouseover", this._onMouseOver);
-        off(this.table, "mousedown", this._onMouseDown);
-        off(this.table, "mouseenter", this._onMouseEnter);
-        off(this.table, "mouseleave", this._onMouseLeave);
-        off(document.body, "mouseup", this._onMouseUp);
-        off(this.table.ownerDocument, "click", this._onOutTableClick);
         this.removeEvents();
     }
 }
