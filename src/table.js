@@ -65,6 +65,7 @@ export default class Table {
     }
 
     onMouseDown(e) {
+        if (this.isIgnoreMouseDown) return;
         if (_gOptions.mouseBlockSelection) e.preventDefault();
         if (this.isRightMouseBtn(e)) return true;
 
@@ -80,15 +81,16 @@ export default class Table {
     }
 
     onMouseOver(e) {
-        if (!this.isMouseDown) return false;
-
         let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
-        //if ( !this.obSelector.isSelectedCell(cell) ) {
+        if (!this.isMouseDown) {
+            this.isIgnoreMouseDown = this.obSelector.isSelectedCell(cell);
+            return;
+        }
+
         let coords = this.obSelector.getSelectedRectangleCoords( this.coord0, [cell.parentNode.rowIndex, cell.cellIndex] );
         if ( coords !== false ) this.obSelector.select(coords[0], coords[1]);
-        // }
     }
 
     onMouseEnter () {
@@ -102,6 +104,7 @@ export default class Table {
     onMouseUp(e) {
         if (this.isMouseDown) this.obEvent.finishSelect(e);
         this.isMouseDown = false;
+        this.isIgnoreMouseDown = true;
     }
 
     onOutTableClick() {
