@@ -1,6 +1,6 @@
 import {_gOptions} from "./app";
 import {getParentTags, isElement, on, off} from "./dom";
-import {addClass, removeClass} from "./funcs";
+import {addClass} from "./funcs";
 
 export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
@@ -102,9 +102,11 @@ export default class Table {
     }
 
     onMouseUp(e) {
-        if (this.isMouseDown) this.obEvent.finishSelect(e);
+        if (this.isMouseDown) {
+            this.obEvent.finishSelect(e);
+            this.isIgnoreMouseDown = true;
+        }
         this.isMouseDown = false;
-        this.isIgnoreMouseDown = true;
     }
 
     onOutTableClick() {

@@ -1,6 +1,6 @@
 {
-  "name": "js-table-cell-selector",
-  "version": "0.5.0",
+  "name": "@xbrlrs/js-table-cell-selector",
+  "version": "0.5.4",
   "description": "JS library allows you to select cells of HTML tables as well as cleaning, copying, cutting and pasting ",
   "main": "dist/tcs.bundle.js",
   "scripts": {
@@ -36,25 +36,25 @@
   },
   "homepage": "https://github.com/darkridder/js-table-cell-selector#readme",
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.3.0",
-    "@babel/plugin-transform-object-assign": "^7.2.0",
-    "@babel/plugin-transform-parameters": "^7.2.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.1",
-    "eslint-loader": "^2.1.1",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-object-assign": "^7.8.3",
+    "@babel/plugin-transform-parameters": "^7.8.7",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-loader": "^3.0.3",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/polyfill": "^7.2.5",
-    "@babel/preset-env": "^7.4.0",
-    "babel-loader": "^8.0.5",
-    "core-js": "3",
+    "@babel/core": "^7.8.7",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "babel-loader": "^8.0.6",
+    "core-js": "^3.6.4",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "object-copy": "^1.0.0",
-    "uglifyjs-webpack-plugin": "^2.1.1",
-    "webpack": "^4.29.0"
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.42.0"
   }
 }
