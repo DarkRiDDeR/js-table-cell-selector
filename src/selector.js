@@ -286,7 +286,7 @@ export default class Selector {
 
     goCells ( fn ) {
         let rows = this.table.getElementsByTagName("tr");
-        if (rows !== this.countRows) {
+        if (rows.length !== this.countRows) {
             this.initSizeMatrix();
         }
         for (let iy = 0; iy < this.countRows; iy++) {

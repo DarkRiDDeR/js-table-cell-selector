@@ -217,13 +217,13 @@ var isUndef = function isUndef(value) {
   return typeof value === 'undefined';
 };
 var addClass = function addClass(elem, name) {
-  elem.classList.add(name);
+  elem && elem.classList && elem.classList.add(name);
 };
 var hasClass = function hasClass(elem, name) {
-  return elem.classList.contains(name);
+  return elem && elem.classList && elem.classList.contains(name);
 };
 var removeClass = function removeClass(elem, name) {
-  elem.classList.remove(name);
+  elem && elem.classList && elem.classList.remove(name);
 };
 
 /***/ }),
@@ -3995,7 +3995,7 @@ var Selector = /*#__PURE__*/function () {
     value: function goCells(fn) {
       var rows = this.table.getElementsByTagName("tr");
 
-      if (rows !== this.countRows) {
+      if (rows.length !== this.countRows) {
         this.initSizeMatrix();
       }
 
