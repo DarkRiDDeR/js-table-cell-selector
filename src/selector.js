@@ -1,6 +1,6 @@
 import {_gOptions} from "./app";
 import {getElementsByTagNames} from "./dom";
-import {isUndef, isEmpty, addClass, hasClass, removeClass} from "./funcs";
+import {isUndef, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Selector {
     _countCols = 0;
@@ -286,6 +286,9 @@ export default class Selector {
 
     goCells ( fn ) {
         let rows = this.table.getElementsByTagName("tr");
+        if (rows.length !== this.countRows) {
+            this.initSizeMatrix();
+        }
         for (let iy = 0; iy < this.countRows; iy++) {
             let cells = getElementsByTagNames("td, th", rows[iy]);
             for (let ix = 0; ix < this.countCols; ix++) {

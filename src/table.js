@@ -1,6 +1,6 @@
 import {_gOptions} from "./app";
 import {getParentTags, isElement, on, off} from "./dom";
-import {addClass, removeClass} from "./funcs";
+import {addClass} from "./funcs";
 
 export default class Table {
     isMouseDown = false; // whether the left mouse button is pressed
@@ -39,6 +39,15 @@ export default class Table {
         on(this.table.ownerDocument, "click", this._onOutTableClick); // click outside the table
     }
 
+    removeEvents() {
+        off(this.table, "mouseover", this._onMouseOver);
+        off(this.table, "mousedown", this._onMouseDown);
+        off(this.table, "mouseenter", this._onMouseEnter);
+        off(this.table, "mouseleave", this._onMouseLeave);
+        off(document.body, "mouseup", this._onMouseUp);
+        off(this.table.ownerDocument, "click", this._onOutTableClick);
+    }
+
     get isMouse () {
         return this._isMouse;
     }
@@ -56,6 +65,7 @@ export default class Table {
     }
 
     onMouseDown(e) {
+        if (this.isIgnoreMouseDown) return;
         if (_gOptions.mouseBlockSelection) e.preventDefault();
         if (this.isRightMouseBtn(e)) return true;
 
@@ -71,15 +81,16 @@ export default class Table {
     }
 
     onMouseOver(e) {
-        if (!this.isMouseDown) return false;
-
         let cell = getParentTags(e.target, "td,th");
         if (cell === null) return; // not for cell
 
-        //if ( !this.obSelector.isSelectedCell(cell) ) {
+        if (!this.isMouseDown) {
+            this.isIgnoreMouseDown = this.obSelector.isSelectedCell(cell);
+            return;
+        }
+
         let coords = this.obSelector.getSelectedRectangleCoords( this.coord0, [cell.parentNode.rowIndex, cell.cellIndex] );
         if ( coords !== false ) this.obSelector.select(coords[0], coords[1]);
-        // }
     }
 
     onMouseEnter () {
@@ -91,7 +102,10 @@ export default class Table {
     }
 
     onMouseUp(e) {
-        if (this.isMouseDown) this.obEvent.finishSelect(e);
+        if (this.isMouseDown) {
+            this.obEvent.finishSelect(e);
+            this.isIgnoreMouseDown = true;
+        }
         this.isMouseDown = false;
     }
 
@@ -103,12 +117,6 @@ export default class Table {
     }
 
     destroy() {
-        off(this.table, "mouseover", this._onMouseOver);
-        off(this.table, "mousedown", this._onMouseDown);
-        off(this.table, "mouseenter", this._onMouseEnter);
-        off(this.table, "mouseleave", this._onMouseLeave);
-        off(document.body, "mouseup", this._onMouseUp);
-        off(this.table.ownerDocument, "click", this._onOutTableClick);
         this.removeEvents();
     }
 }

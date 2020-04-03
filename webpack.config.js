@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+// const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
-const webpack = require('webpack');
+// const webpack = require('webpack');
 
 const SRC_DIR = path.join(__dirname, "/src");
 const DIST_DIR = path.join(__dirname, "/dist");
@@ -10,7 +11,7 @@ const EXAMPLE_DIR = path.join(__dirname, "/example");
 module.exports = (env, argv) => ({
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 cache: true,
                 include: /\.min\.js$/,
                 parallel: true,

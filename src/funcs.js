@@ -7,11 +7,11 @@ export const isUndef = function(value){
 };
 
 export const addClass = function(elem, name){
-    elem.classList.add(name);
+    elem && elem.classList && elem.classList.add(name);
 };
 export const hasClass = function(elem, name){
-    return elem.classList.contains(name);
+    return elem && elem.classList && elem.classList.contains(name);
 };
 export const removeClass = function(elem, name){
-    elem.classList.remove(name);
+    elem && elem.classList && elem.classList.remove(name);
 };
