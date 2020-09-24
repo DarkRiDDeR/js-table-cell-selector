@@ -64,6 +64,11 @@ export default class Table {
         return isRightMB;
     }
 
+    isCtrlClick(e) {
+        e = e || window.event;
+        return e.ctrlKey;
+    }
+
     onMouseDown(e) {
         if (this.isIgnoreMouseDown) return;
         if (_gOptions.mouseBlockSelection) e.preventDefault();
@@ -74,8 +79,11 @@ export default class Table {
 
         this.isMouseDown = true;
 
-        this.obSelector.deselectAll();
+        if (!this.isCtrlClick(e)) {
+            this.obSelector.deselectAll();
+        }
         this.obSelector.selectCell(cell);
+
         this.obEvent.startSelect(e, cell);
         this.coord0 = [ cell.parentNode.rowIndex, cell.cellIndex ];
     }
