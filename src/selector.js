@@ -154,9 +154,10 @@ export default class Selector {
         this._countCols = 0;
 
         for (let row of rows) {
-            let length = getElementsByTagNames("td, th", row).length;
-            if (length > this.countCols) {
-                this._countCols = length;
+            const colElem = getElementsByTagNames("td, th", row);
+            const rowCols = colElem.reduce((pre,curr) => pre + curr.colSpan, 0);
+            if (rowCols > this.countCols) {
+                this._countCols = rowCols;
             }
         }
 
