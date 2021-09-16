@@ -6,7 +6,6 @@ const path = require("path");
 
 const SRC_DIR = path.join(__dirname, "/src");
 const DIST_DIR = path.join(__dirname, "/dist");
-const EXAMPLE_DIR = path.join(__dirname, "/example");
 
 module.exports = (env, argv) => ({
     optimization: {
@@ -52,13 +51,13 @@ module.exports = (env, argv) => ({
     },
     devtool: argv.mode !== "production" ? "eval-cheap-module-source-map" : "source-map",
     plugins: [
-        new HtmlWebpackPlugin({
+        argv.mode !== "production" ? new HtmlWebpackPlugin({
             chunks: [ "tcs.bundle" ],
             template: path.join(__dirname, "index.html"),
-            filename: path.join((argv.mode !== "production" ? DIST_DIR : EXAMPLE_DIR), "index.html"),
+            filename: path.join(DIST_DIR, "index.html"),
             inject: "head",
-        })
-    ],
+        }) : false
+    ].filter(Boolean),
     devServer: {
         contentBase: SRC_DIR,
         watchContentBase: true,

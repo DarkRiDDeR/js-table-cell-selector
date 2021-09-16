@@ -6,6 +6,7 @@
 *.iml
 *.ipr
 .idea/
+dist/
 
 
 *.log

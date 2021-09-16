@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector.svg?branch=master)](https://travis-ci.org/DarkRiDDeR/js-table-cell-selector)
 [![](https://img.shields.io/npm/v/js-table-cell-selector.svg?style=flat)](https://www.npmjs.com/package/js-table-cell-selector)
-[![](https://img.shields.io/github/size/DarkRiDDeR/js-table-cell-selector/dist/tcs.bundle.min.js.svg?colorB=39F&style=flat)](https://github.com/DarkRiDDeR/js-table-cell-selector/blob/master/dist/tcs.bundle.min.js)
+![](https://img.shields.io/bundlephobia/min/js-table-cell-selector)
 [![](https://img.shields.io/github/license/DarkRiDDeR/js-table-cell-selector.svg?style=flat)](https://github.com/DarkRiDDeR/js-table-cell-selector/blob/master/LICENSE)
 
 JS library allows you to select cells of HTML tables as well as cleaning, copying, cutting and pasting data of table.
@@ -10,7 +10,7 @@ JS library allows you to select cells of HTML tables as well as cleaning, copyin
 Supported copy/cut/paste to spreadsheets such as Microsoft Excel, Google Docs, LibreOffice and OpenOffice.
 
 ## Demo
-See [demo](http://darkridder.github.io/js-table-cell-selector/example/).
+See [demo](https://darkridder.github.io/js-table-cell-selector/).
 
 ## Setup
 
