@@ -278,7 +278,12 @@ export default class Selector {
 
 
     selectCell(cell) {
-        if (_gOptions.selectIgnoreClass || !this.isIgnoredCell(cell)) {
+        const ppn = cell.parentNode.parentNode;
+        const isSelected = _gOptions.selectIgnoreClass || !hasClass(cell, _gOptions.ignoreClass);
+        if (((ppn.tagName === "TBODY" || ppn.tagName === "TABLE") && isSelected)
+            || (ppn.tagName === "THEAD" && !_gOptions.ignoreThead && isSelected)
+            || (ppn.tagName === "TFOOT" && !_gOptions.ignoreTfoot && isSelected))
+        {
             addClass(cell, _gOptions.selectClass);
             return true;
         }
