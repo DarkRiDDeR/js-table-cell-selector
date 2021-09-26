@@ -40,15 +40,23 @@
         .interface input[type=number] {
             width: 3em;
         }
+        .tables {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
+        #size-matrix {
+            margin-left: 3em;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/js-table-cell-selector/dist/tcs.bundle.js"></script>
 </head>
 
 <body>
 <h1>JS Table Cell Selector</h1>
-
-<table id="tcs-table">
-    <thead>
+<div class="tables">
+    <table id="tcs-table">
+        <thead>
         <tr class="tcs-ignore">
             <th>0.0</th>
             <th>0.1</th>
@@ -76,8 +84,8 @@
             <td>2.5</td>
             <td>2.6</td>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         <tr>
             <th>3.0</th>
             <td>3.1</td>
@@ -110,8 +118,8 @@
             <td>6.5</td>
             <td>6.6</td>
         </tr>
-    </tbody>
-    <tfoot>
+        </tbody>
+        <tfoot>
         <tr>
             <th>7.0</th>
             <td>7.1</td>
@@ -129,8 +137,13 @@
             <td>8.5</td>
             <td>8.6</td>
         </tr>
-    </tfoot>
-</table>
+        </tfoot>
+    </table>
+    <div id="size-matrix">
+        <strong>Size matrix</strong>, where cells contain values [back up, back left, col position]:<br>
+        <table></table>
+    </div>
+</div>
 <br>
 <br>
 <div class="interface">
@@ -186,6 +199,18 @@
         };
         var buffer = new TableCellSelector.Buffer();
         var tcs = new TableCellSelector(table, options, buffer);
+
+        // out size matrix
+        var sizeTable = document.getElementById("size-matrix").getElementsByTagName("table")[0];
+        tcs.obSelector.matrix.forEach(function(rowData) {
+            var row = document.createElement('tr');
+            rowData.forEach(function (cellData) {
+                var cell = document.createElement('td');
+                cell.appendChild(document.createTextNode(cellData));
+                row.appendChild(cell);
+            });
+            sizeTable.appendChild(row);
+        });
 
         function getCoord() {
             return [
