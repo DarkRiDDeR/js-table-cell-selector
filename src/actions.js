@@ -93,7 +93,7 @@ export default class Actions {
         for (let iy = c1[0]; iy < maxY; iy++) {
             let maxX = c1[1] + data[iy-c1[0]].length;
             if (maxX > countC) maxX = countC;
-            if (isUndef(c2) && maxX > c2[1]) maxX = c2[1]+1;
+            if (!isUndef(c2) && maxX > c2[1]) maxX = c2[1]+1;
 
             let cellFn;
             for (let ix = c1[1]; ix < maxX; ix++) {
