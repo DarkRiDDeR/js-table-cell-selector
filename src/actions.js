@@ -1,5 +1,4 @@
 import {_gOptions} from "./app";
-import {getElementsByTagNames} from "./dom";
 import {isUndef} from "./funcs";
 
 export default class Actions {
@@ -62,9 +61,8 @@ export default class Actions {
 
     iterateCells (c1, c2, callbackFn) {
         const matrix = this.obSelector.sizeMatrix;
-        let rows = this.table.getElementsByTagName("tr");
         for (let iy = c1[0]; iy <= c2[0]; iy++) {
-            let cells = getElementsByTagNames("td,th", rows[iy]);
+            let cells = this.table.rows[iy].cells;
             for (let ix = c1[1]; ix <= c2[1]; ix++) {
                 if (!(matrix[iy][ix][0] < 0) && !(matrix[iy][ix][1] < 0)) {
                     callbackFn(iy, ix, cells[matrix[iy][ix][2]]);
@@ -82,7 +80,6 @@ export default class Actions {
 
     paste (data, c1, c2) {
         const matrix = this.obSelector.sizeMatrix;
-        const rows = this.table.getElementsByTagName("tr");
         const countR = this.obSelector.countRows;
         const countC = this.obSelector.countCols;
 
@@ -108,7 +105,7 @@ export default class Actions {
                     cellFn = _gOptions.setCellFn;
                 }
 
-                let cell = getElementsByTagNames("td,th", rows[y])[matrix[y][x][2]];
+                let cell = this.table.rows[y].cells[matrix[y][x][2]];
                 if (!this.obSelector.isIgnoredCell(cell)) {
                     cellFn(cell, data[iy - c1[0]][ix - c1[1]], [y, x]);
                 }

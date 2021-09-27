@@ -1,5 +1,4 @@
 import {_gOptions} from "./app";
-import {getElementsByTagNames} from "./dom";
 import {isUndef, addClass, hasClass, removeClass} from "./funcs";
 
 export default class Selector {
@@ -43,8 +42,7 @@ export default class Selector {
                 if (this.matrix[c[0]][c[1]][0] < 0) c[0] += this.matrix[c[0]][c[1]][0];
                 if (this.matrix[c[0]][c[1]][1] < 0) c[1] += this.matrix[c[0]][c[1]][1];
 
-                let row = this.table.getElementsByTagName("tr")[c[0]];
-                return getElementsByTagNames("td,th", row)[this.matrix[c[0]][c[1]][2]];
+                return this.table.rows[c[0]].cells[this.matrix[c[0]][c[1]][2]];
             }
         }
     }
@@ -149,15 +147,17 @@ export default class Selector {
     }
 
     initSizeMatrix () {
-        let rows = this.table.getElementsByTagName("tr");
+        const rows = this.table.rows;
         this._countRows = rows.length;
         this._countCols = 0;
 
         for (let row of rows) {
-            const colElem = getElementsByTagNames("td, th", row);
-            const rowCols = colElem.reduce((pre,curr) => pre + curr.colSpan, 0);
-            if (rowCols > this.countCols) {
-                this._countCols = rowCols;
+            let max = 0;
+            row.cells.forEach(function (c) {
+                max += c.colSpan;
+            });
+            if (max > this.countCols) {
+                this._countCols = max;
             }
         }
 
@@ -171,7 +171,7 @@ export default class Selector {
         let iy = 0;
         for (let row of rows) {
             let ix = 0;
-            let cells = getElementsByTagNames("td, th", row);
+            let cells = row.cells;
             const crestFn = () => {
                 while (ix < this.countCols && rowCrest[ix]) {
                     rowCrest[ix]--;
@@ -291,12 +291,12 @@ export default class Selector {
     }
 
     goCells ( fn ) {
-        let rows = this.table.getElementsByTagName("tr");
+        const rows = this.table.rows;
         if (rows.length !== this.countRows) {
             this.initSizeMatrix();
         }
         for (let iy = 0; iy < this.countRows; iy++) {
-            let cells = getElementsByTagNames("td, th", rows[iy]);
+            let cells = rows[iy].cells;
             for (let ix = 0; ix < this.countCols; ix++) {
                 if (!(this.matrix[iy][ix][0] < 0) && !(this.matrix[iy][ix][1] < 0)) {
                     fn( cells[this.matrix[iy][ix][2]], [ iy, ix ] );
